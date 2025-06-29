@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
+import { toast } from "sonner";
 import { useMarkdownConverter } from "../hooks/use-markdown-converter";
 import type { ViewMode } from "../types";
 import { HtmlPreview } from "./html-preview";
@@ -14,18 +15,27 @@ export function MarkdownToHtml() {
 		useMarkdownConverter();
 
 	const handleCopyHtml = useCallback(async () => {
-		if (html) {
-			try {
-				await navigator.clipboard.writeText(html);
-				// You could add a toast notification here
-			} catch (err) {
-				console.error("Failed to copy HTML:", err);
-			}
+		if (!html) {
+			toast.error("No HTML content to copy");
+			return;
+		}
+
+		try {
+			await navigator.clipboard.writeText(html);
+			toast.success("HTML copied to clipboard!");
+		} catch (err) {
+			console.error("Failed to copy HTML:", err);
+			toast.error("Failed to copy HTML to clipboard");
 		}
 	}, [html]);
 
 	const handleDownloadHtml = useCallback(() => {
-		if (html) {
+		if (!html) {
+			toast.error("No HTML content to download");
+			return;
+		}
+
+		try {
 			const blob = new Blob([html], { type: "text/html" });
 			const url = URL.createObjectURL(blob);
 			const a = document.createElement("a");
@@ -35,6 +45,10 @@ export function MarkdownToHtml() {
 			a.click();
 			document.body.removeChild(a);
 			URL.revokeObjectURL(url);
+			toast.success("HTML file downloaded successfully!");
+		} catch (err) {
+			console.error("Failed to download HTML:", err);
+			toast.error("Failed to download HTML file");
 		}
 	}, [html]);
 
@@ -80,7 +94,10 @@ export function MarkdownToHtml() {
 				charCount={charCount}
 				onCopyHtml={handleCopyHtml}
 				onDownloadHtml={handleDownloadHtml}
-				onReset={resetToDefault}
+				onReset={() => {
+					resetToDefault();
+					toast.info("Content reset to default");
+				}}
 				hasContent={hasContent}
 			/>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import {
+	Check,
 	Columns2,
 	Copy,
 	Download,
@@ -8,9 +9,10 @@ import {
 	Eye,
 	FileText,
 	Hash,
+	Loader2,
 	RotateCcw,
 } from "lucide-react";
-import { memo, useCallback } from "react";
+import { memo, useCallback, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -22,7 +24,7 @@ interface ToolbarProps {
 	onViewModeChange: (mode: ViewMode) => void;
 	wordCount: number;
 	charCount: number;
-	onCopyHtml: () => void;
+	onCopyHtml: () => Promise<void>;
 	onDownloadHtml: () => void;
 	onReset: () => void;
 	hasContent: boolean;
@@ -38,6 +40,16 @@ export const Toolbar = memo(function Toolbar({
 	onReset,
 	hasContent,
 }: ToolbarProps) {
+	const [copyState, setCopyState] = useState<"idle" | "loading" | "success">(
+		"idle",
+	);
+	const [downloadState, setDownloadState] = useState<
+		"idle" | "loading" | "success"
+	>("idle");
+	const [resetState, setResetState] = useState<"idle" | "loading" | "success">(
+		"idle",
+	);
+
 	const handleSplitMode = useCallback(
 		() => onViewModeChange("split"),
 		[onViewModeChange],
@@ -50,6 +62,39 @@ export const Toolbar = memo(function Toolbar({
 		() => onViewModeChange("preview"),
 		[onViewModeChange],
 	);
+
+	const handleCopyWithFeedback = useCallback(async () => {
+		setCopyState("loading");
+		try {
+			await onCopyHtml();
+			setCopyState("success");
+			setTimeout(() => setCopyState("idle"), 2000);
+		} catch {
+			setCopyState("idle");
+		}
+	}, [onCopyHtml]);
+
+	const handleDownloadWithFeedback = useCallback(() => {
+		setDownloadState("loading");
+		try {
+			onDownloadHtml();
+			setDownloadState("success");
+			setTimeout(() => setDownloadState("idle"), 2000);
+		} catch {
+			setDownloadState("idle");
+		}
+	}, [onDownloadHtml]);
+
+	const handleResetWithFeedback = useCallback(() => {
+		setResetState("loading");
+		try {
+			onReset();
+			setResetState("success");
+			setTimeout(() => setResetState("idle"), 2000);
+		} catch {
+			setResetState("idle");
+		}
+	}, [onReset]);
 
 	return (
 		<Card>
@@ -111,33 +156,58 @@ export const Toolbar = memo(function Toolbar({
 						{/* Action Buttons */}
 						<div className="flex items-center gap-2">
 							<Button
-								variant="outline"
+								variant={copyState === "success" ? "default" : "outline"}
 								size="sm"
-								onClick={onCopyHtml}
-								disabled={!hasContent}
-								className="gap-1"
+								onClick={handleCopyWithFeedback}
+								disabled={!hasContent || copyState === "loading"}
+								className="gap-1 transition-colors"
 							>
-								<Copy className="h-4 w-4" />
-								<span className="hidden sm:inline">Copy HTML</span>
+								{copyState === "loading" ? (
+									<Loader2 className="h-4 w-4 animate-spin" />
+								) : copyState === "success" ? (
+									<Check className="h-4 w-4" />
+								) : (
+									<Copy className="h-4 w-4" />
+								)}
+								<span className="hidden sm:inline">
+									{copyState === "success" ? "Copied!" : "Copy HTML"}
+								</span>
 							</Button>
 							<Button
-								variant="outline"
+								variant={downloadState === "success" ? "default" : "outline"}
 								size="sm"
-								onClick={onDownloadHtml}
-								disabled={!hasContent}
-								className="gap-1"
+								onClick={handleDownloadWithFeedback}
+								disabled={!hasContent || downloadState === "loading"}
+								className="gap-1 transition-colors"
 							>
-								<Download className="h-4 w-4" />
-								<span className="hidden sm:inline">Download</span>
+								{downloadState === "loading" ? (
+									<Loader2 className="h-4 w-4 animate-spin" />
+								) : downloadState === "success" ? (
+									<Check className="h-4 w-4" />
+								) : (
+									<Download className="h-4 w-4" />
+								)}
+								<span className="hidden sm:inline">
+									{downloadState === "success" ? "Downloaded!" : "Download"}
+								</span>
 							</Button>
 							<Button
-							variant="outline"
-							size="sm"
-							onClick={onReset}
-							className="gap-1"
-						>
-								<RotateCcw className="h-4 w-4" />
-								<span className="hidden sm:inline">Reset</span>
+								variant={resetState === "success" ? "default" : "outline"}
+								size="sm"
+								onClick={handleResetWithFeedback}
+								disabled={resetState === "loading"}
+								className="gap-1 transition-colors"
+							>
+								{resetState === "loading" ? (
+									<Loader2 className="h-4 w-4 animate-spin" />
+								) : resetState === "success" ? (
+									<Check className="h-4 w-4" />
+								) : (
+									<RotateCcw className="h-4 w-4" />
+								)}
+								<span className="hidden sm:inline">
+									{resetState === "success" ? "Reset!" : "Reset"}
+								</span>
 							</Button>
 						</div>
 					</div>

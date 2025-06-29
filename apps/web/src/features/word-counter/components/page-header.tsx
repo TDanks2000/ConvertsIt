@@ -1,13 +1,22 @@
+import { Hash, Type } from "lucide-react";
+
 interface PageHeaderProps {
-	title: string;
-	description: string;
+	title?: string;
+	description?: string;
 }
 
-export function PageHeader({ title, description }: PageHeaderProps) {
+export function PageHeader({
+	title = "Word Counter",
+	description = "Analyze your text with real-time word, character, and line counting plus advanced text statistics",
+}: PageHeaderProps) {
 	return (
 		<div className="space-y-2 text-center">
+			<div className="flex items-center justify-center gap-2">
+				<Type className="h-8 w-8 text-primary" />
+				<Hash className="h-8 w-8 text-primary" />
+			</div>
 			<h1 className="font-bold text-3xl tracking-tight">{title}</h1>
-			<p className="text-muted-foreground">{description}</p>
+			<p className="mx-auto max-w-2xl text-muted-foreground">{description}</p>
 		</div>
 	);
 }

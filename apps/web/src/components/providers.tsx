@@ -19,7 +19,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 				<TooltipProvider>{children}</TooltipProvider>
 				<ReactQueryDevtools />
 			</QueryClientProvider>
-			<Toaster richColors />
+			<Toaster richColors position="bottom-center" />
 		</ThemeProvider>
 	);
 }
