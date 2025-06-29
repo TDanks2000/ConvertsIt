@@ -1,6 +1,6 @@
 "use client";
 
-import { FileText, Hash } from "lucide-react";
+import { FileText, Hash, ImageIcon } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 
@@ -33,6 +33,13 @@ const tools: {
 		href: "/word-counter",
 		description: "Count words, characters, and analyze text statistics.",
 		icon: <Hash className="h-4 w-4" />,
+	},
+	{
+		title: "Image Converter",
+		href: "/image-converter",
+		description:
+			"Convert images between different formats with customizable quality and resize options.",
+		icon: <ImageIcon className="h-4 w-4" />,
 	},
 ];
 
