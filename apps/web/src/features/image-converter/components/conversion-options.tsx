@@ -48,6 +48,30 @@ const formatOptions = [
 		description: "Uncompressed bitmap",
 		features: { quality: false, transparency: false, animation: false },
 	},
+	{
+		value: "tiff",
+		label: "TIFF",
+		description: "High quality archival format",
+		features: { quality: false, transparency: true, animation: false },
+	},
+	{
+		value: "avif",
+		label: "AVIF",
+		description: "Next-gen format with excellent compression",
+		features: { quality: true, transparency: true, animation: false },
+	},
+	{
+		value: "ico",
+		label: "ICO",
+		description: "Windows icon format",
+		features: { quality: false, transparency: true, animation: false },
+	},
+	{
+		value: "svg",
+		label: "SVG",
+		description: "Vector graphics format",
+		features: { quality: false, transparency: true, animation: true },
+	},
 ] as const;
 
 export function ConversionOptionsComponent({
@@ -70,7 +94,7 @@ export function ConversionOptionsComponent({
 				{/* Format Selection */}
 				<div className="space-y-3">
 					<Label className="font-medium text-sm">Output Format</Label>
-					<div className="grid grid-cols-3 gap-2 sm:grid-cols-3 md:grid-cols-5">
+					<div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
 						{formatOptions.map((format) => (
 							<Button
 								key={format.value}
@@ -139,8 +163,9 @@ export function ConversionOptionsComponent({
 					</div>
 				</div>
 
-				{/* Quality Slider (only for JPEG) */}
-				{(options.format === "jpeg" || options.format === "webp") && (
+				{(options.format === "jpeg" ||
+					options.format === "webp" ||
+					options.format === "avif") && (
 					<div className="space-y-3">
 						<div className="flex items-center justify-between">
 							<Label className="font-medium text-sm">Quality</Label>

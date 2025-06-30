@@ -93,7 +93,7 @@ export function FileUpload({ onFilesSelected, disabled }: FileUploadProps) {
 						Drag and drop your images here, or click to browse
 					</p>
 					<p className="text-muted-foreground text-xs">
-						Supports: JPEG, PNG, GIF, WebP, BMP
+						Supports: JPEG, PNG, GIF, WebP, BMP, TIFF, AVIF, ICO, SVG
 					</p>
 				</div>
 

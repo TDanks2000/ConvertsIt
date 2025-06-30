@@ -6,6 +6,31 @@ export namespace ImageConverter {
 		options: ConversionOptions,
 	): Promise<ConversionResult> {
 		try {
+			// Handle SVG output format specially
+			if (options.format === "svg") {
+				// For SVG output, we need to create an SVG wrapper
+				return new Promise((resolve) => {
+					const img = new Image();
+					img.onload = () => {
+						const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" width="${options.width || img.width}" height="${options.height || img.height}" viewBox="0 0 ${img.width} ${img.height}"><image href="${img.src}" width="${img.width}" height="${img.height}"/></svg>`;
+						const blob = new Blob([svgContent], { type: 'image/svg+xml' });
+						const url = URL.createObjectURL(blob);
+						resolve({
+							success: true,
+							url,
+							size: blob.size,
+						});
+					};
+					img.onerror = () => {
+						resolve({
+							success: false,
+							error: "Failed to load image for SVG conversion",
+						});
+					};
+					img.src = URL.createObjectURL(file);
+				});
+			}
+
 			return new Promise((resolve) => {
 				const canvas = document.createElement("canvas");
 				const ctx = canvas.getContext("2d");
@@ -48,7 +73,9 @@ export namespace ImageConverter {
 					// Convert to desired format
 					const mimeType = `image/${options.format}`;
 					const quality =
-						options.format === "jpeg" ? options.quality / 100 : undefined;
+						(options.format === "jpeg" || options.format === "webp" || options.format === "avif") 
+							? options.quality / 100 
+							: undefined;
 
 					canvas.toBlob(
 						(blob) => {
@@ -110,6 +137,14 @@ export namespace ImageConverter {
 			"image/gif",
 			"image/webp",
 			"image/bmp",
+			"image/tiff",
+			"image/tif",
+			"image/avif",
+			"image/x-icon",
+			"image/vnd.microsoft.icon",
+			"image/ico",
+			"image/icon",
+			"image/svg+xml",
 		];
 		return validTypes.includes(file.type);
 	}

@@ -13,7 +13,7 @@ export interface ImageFile {
 }
 
 export interface ConversionOptions {
-	format: "jpeg" | "png" | "webp" | "gif" | "bmp";
+	format: "jpeg" | "png" | "webp" | "gif" | "bmp" | "tiff" | "avif" | "ico" | "svg";
 	quality: number;
 	width?: number;
 	height?: number;

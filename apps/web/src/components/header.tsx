@@ -11,7 +11,7 @@ export default function Header() {
 				<div className="flex items-center gap-3">
 					<Image
 						src="/icon-64x64.png"
-						alt="FlowTools Logo"
+						alt="Convertsit Logo"
 						width={32}
 						height={32}
 						className="rounded-md"

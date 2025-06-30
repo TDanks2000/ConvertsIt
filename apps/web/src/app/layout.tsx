@@ -17,8 +17,43 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-	title: "FlowTools",
-	description: "FlowTools",
+	title: {
+		default: "Convertsit - A collection of free tools for developers",
+		template: "%s | Convertsit",
+	},
+	description: "A collection of free tools for developers",
+	keywords: [
+		"Convertsit",
+		"Developer Tools",
+		"Free Tools",
+		"Web Development",
+		"Productivity",
+	],
+	creator: "Convertsit",
+	openGraph: {
+		type: "website",
+		locale: "en_US",
+		title: {
+			default: "Convertsit - A collection of free tools for developers",
+			template: "%s | Convertsit",
+		},
+		description: "A collection of free tools for developers",
+		siteName: "Convertsit",
+	},
+	twitter: {
+		card: "summary_large_image",
+		title: {
+			default: "Convertsit - A collection of free tools for developers",
+			template: "%s | Convertsit",
+		},
+		description: "A collection of free tools for developers",
+	},
+	icons: {
+		icon: "/favicon.ico",
+		shortcut: "/icon-16x16.png",
+		apple: "/icon-180x180.png",
+	},
+	manifest: "/site.webmanifest",
 };
 
 export default function RootLayout({

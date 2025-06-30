@@ -1,4 +1,4 @@
-# FlowTools
+# Convertsit
 
 This project was created with [Better-T-Stack](https://github.com/AmanVarshney01/create-better-t-stack), a modern TypeScript stack that combines Next.js, Elysia, TRPC, and more.
 
@@ -37,7 +37,7 @@ The API is running at [http://localhost:3000](http://localhost:3000).
 ## Project Structure
 
 ```
-FlowTools/
+Convertsit/
 ├── apps/
 │   ├── web/         # Frontend application (Next.js)
 │   └── server/      # Backend API (Elysia, TRPC)

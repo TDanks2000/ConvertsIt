@@ -1,5 +1,5 @@
 {
-	"name": "flowtools",
+	"name": "convertsit",
 	"private": true,
 	"workspaces": [
 		"apps/*",
