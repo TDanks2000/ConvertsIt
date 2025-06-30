@@ -1,5 +1,5 @@
 <div align="center">
-  <img alt="ConvertsIt Logo" height="150px" src="/apps/web/public/icon.png">
+  <img alt="ConvertsIt Logo" height="150px" src="/apps/web/public/icon-180x180.png">
 </div>
 
 # ConvertsIt - Your Essential Online Toolkit for Text & Web Utilities
