@@ -2,8 +2,12 @@
 
 import { FileJsonIcon, FileText, Hash, ImageIcon } from "lucide-react";
 import Link from "next/link";
-import * as React from "react";
-
+import {
+	type ComponentPropsWithoutRef,
+	type ComponentRef,
+	forwardRef,
+	type ReactNode,
+} from "react";
 import {
 	NavigationMenu,
 	NavigationMenuContent,
@@ -19,12 +23,12 @@ interface Tool {
 	title: string;
 	href: string;
 	description: string;
-	icon: React.ReactNode;
+	icon: ReactNode;
 }
 
 interface ToolCategory {
 	label: string;
-	icon: React.ReactNode;
+	icon: ReactNode;
 	tools: Tool[];
 	ulClassName?: string;
 }
@@ -141,11 +145,11 @@ export function Navigation() {
 	);
 }
 
-const ListItem = React.forwardRef<
-	React.ElementRef<typeof Link>,
-	React.ComponentPropsWithoutRef<typeof Link> & {
+const ListItem = forwardRef<
+	ComponentRef<typeof Link>,
+	ComponentPropsWithoutRef<typeof Link> & {
 		title: string;
-		icon?: React.ReactNode;
+		icon?: ReactNode;
 	}
 >(({ className, title, children, icon, ...props }, ref) => {
 	return (
