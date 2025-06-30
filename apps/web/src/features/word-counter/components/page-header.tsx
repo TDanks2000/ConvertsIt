@@ -1,4 +1,5 @@
 import { Hash, Type } from "lucide-react";
+import { PageHeader as BasePageHeader } from "@/components/page-header";
 
 interface PageHeaderProps {
 	title?: string;
@@ -10,13 +11,10 @@ export function PageHeader({
 	description = "Analyze your text with real-time word, character, and line counting plus advanced text statistics",
 }: PageHeaderProps) {
 	return (
-		<div className="space-y-2 text-center">
-			<div className="flex items-center justify-center gap-2">
-				<Type className="h-8 w-8 text-primary" />
-				<Hash className="h-8 w-8 text-primary" />
-			</div>
-			<h1 className="font-bold text-3xl tracking-tight">{title}</h1>
-			<p className="mx-auto max-w-2xl text-muted-foreground">{description}</p>
-		</div>
+		<BasePageHeader
+			title={title}
+			description={description}
+			icons={[Type, Hash]}
+		/>
 	);
 }

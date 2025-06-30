@@ -1,6 +1,6 @@
 "use client";
 
-import { FileText, Hash, ImageIcon } from "lucide-react";
+import { FileJsonIcon, FileText, Hash, ImageIcon } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 
@@ -40,6 +40,13 @@ const tools: {
 		description:
 			"Convert images between different formats with customizable quality and resize options.",
 		icon: <ImageIcon className="h-4 w-4" />,
+	},
+	{
+		title: "JSON Formatter",
+		href: "/json-formatter",
+		description:
+			"Validate, format, beautify, and minify your JSON data with our powerful online tool.",
+		icon: <FileJsonIcon className="h-4 w-4" />,
 	},
 ];
 
