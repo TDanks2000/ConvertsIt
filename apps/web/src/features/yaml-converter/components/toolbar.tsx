@@ -76,22 +76,22 @@ export function Toolbar({
 						</span>
 						<div className="flex rounded-lg border bg-muted/30 p-1">
 							<Button
-								variant={conversionMode === "json-to-csv" ? "default" : "ghost"}
+								variant={conversionMode === "yaml-to-json" ? "default" : "ghost"}
 								size="sm"
 								onClick={onModeSwitch}
 								className="h-7 gap-1 rounded-md px-2 text-xs"
 							>
 								<ArrowRight className="h-3 w-3" />
-								<span className="hidden sm:inline">JSON→CSV</span>
+								<span className="hidden sm:inline">YAML→JSON</span>
 							</Button>
 							<Button
-								variant={conversionMode === "csv-to-json" ? "default" : "ghost"}
+								variant={conversionMode === "json-to-yaml" ? "default" : "ghost"}
 								size="sm"
 								onClick={onModeSwitch}
 								className="h-7 gap-1 rounded-md px-2 text-xs"
 							>
 								<ArrowLeft className="h-3 w-3" />
-								<span className="hidden sm:inline">CSV→JSON</span>
+								<span className="hidden sm:inline">JSON→YAML</span>
 							</Button>
 						</div>
 					</div>
@@ -133,83 +133,80 @@ export function Toolbar({
 
 					<Separator orientation="vertical" className="h-6" />
 
-					{/* Delimiter */}
+					{/* Indent */}
 					<div className="flex items-center gap-2">
 						<span className="whitespace-nowrap font-medium text-muted-foreground text-sm">
-							Delimiter:
+							Indent:
+						</span>
+						<Input
+							type="number"
+							value={options.indent}
+							onChange={(e) =>
+								onOptionsChange({ indent: Number(e.target.value) })
+							}
+							min={1}
+							max={8}
+							className="h-7 w-14 text-xs"
+						/>
+					</div>
+
+					{/* Quoting Type */}
+					<div className="flex items-center gap-2">
+						<span className="whitespace-nowrap font-medium text-muted-foreground text-sm">
+							Quotes:
 						</span>
 						<Select
-							value={options.delimiter}
-							onValueChange={(value) => onOptionsChange({ delimiter: value })}
+							value={options.quotingType}
+							onValueChange={(value: "single" | "double" | "minimal") =>
+								onOptionsChange({ quotingType: value })
+							}
 						>
-							<SelectTrigger className="h-7 w-32 text-xs">
+							<SelectTrigger className="h-7 w-24 text-xs">
 								<SelectValue />
 							</SelectTrigger>
 							<SelectContent>
-								<SelectItem value=",">Comma (,)</SelectItem>
-								<SelectItem value=";">Semicolon (;)</SelectItem>
-								<SelectItem value="\t">Tab</SelectItem>
-								<SelectItem value="|">Pipe (|)</SelectItem>
+								<SelectItem value="minimal">Minimal</SelectItem>
+								<SelectItem value="single">Single</SelectItem>
+								<SelectItem value="double">Double</SelectItem>
 							</SelectContent>
 						</Select>
 					</div>
 
-					{/* Include Headers */}
+					{/* Line Width */}
+					<div className="flex items-center gap-2">
+						<span className="whitespace-nowrap font-medium text-muted-foreground text-sm">
+							Width:
+						</span>
+						<Input
+							type="number"
+							value={options.lineWidth}
+							onChange={(e) =>
+								onOptionsChange({ lineWidth: Number(e.target.value) })
+							}
+							min={40}
+							max={200}
+							className="h-7 w-16 text-xs"
+						/>
+					</div>
+
+					{/* No Refs */}
 					<div className="flex items-center gap-2">
 						<Checkbox
-							id="include-headers"
-							checked={options.includeHeaders}
+							id="no-refs"
+							checked={options.noRefs}
 							onCheckedChange={(checked) =>
-							onOptionsChange({ includeHeaders: checked === true })
-						}
+								onOptionsChange({ noRefs: checked === true })
+							}
 							className="h-3 w-3"
 						/>
 						<label
-							htmlFor="include-headers"
+							htmlFor="no-refs"
 							className="cursor-pointer whitespace-nowrap font-medium text-muted-foreground text-xs"
 						>
-							<span className="hidden sm:inline">Include Headers</span>
-							<span className="sm:hidden">Headers</span>
+							<span className="hidden sm:inline">No References</span>
+							<span className="sm:hidden">No Refs</span>
 						</label>
 					</div>
-
-					{/* Flatten Objects */}
-					<div className="flex items-center gap-2">
-						<Checkbox
-							id="flatten-objects"
-							checked={options.flattenObjects}
-							onCheckedChange={(checked) =>
-							onOptionsChange({ flattenObjects: checked === true })
-						}
-							className="h-3 w-3"
-						/>
-						<label
-							htmlFor="flatten-objects"
-							className="cursor-pointer whitespace-nowrap font-medium text-muted-foreground text-xs"
-						>
-							<span className="hidden sm:inline">Flatten Objects</span>
-							<span className="sm:hidden">Flatten</span>
-						</label>
-					</div>
-
-					{/* Max Depth */}
-					{options.flattenObjects && (
-						<div className="flex items-center gap-2">
-							<span className="whitespace-nowrap font-medium text-muted-foreground text-xs">
-								Depth:
-							</span>
-							<Input
-								type="number"
-								value={options.maxDepth}
-								onChange={(e) =>
-									onOptionsChange({ maxDepth: Number(e.target.value) })
-								}
-								min={1}
-								max={10}
-								className="h-7 w-14 text-xs"
-							/>
-						</div>
-					)}
 
 					<Separator orientation="vertical" className="h-6" />
 

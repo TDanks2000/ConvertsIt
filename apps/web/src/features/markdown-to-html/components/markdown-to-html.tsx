@@ -1,12 +1,13 @@
 "use client";
 
+import { Code, FileText } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { PageHeader } from "@/components";
 import { useMarkdownConverter } from "../hooks/use-markdown-converter";
 import type { ViewMode } from "../types";
 import { HtmlPreview } from "./html-preview";
 import { MarkdownEditor } from "./markdown-editor";
-import { PageHeader } from "./page-header";
 import { Toolbar } from "./toolbar";
 
 export function MarkdownToHtml() {
@@ -85,7 +86,13 @@ export function MarkdownToHtml() {
 
 	return (
 		<div className="container mx-auto space-y-6 p-6">
-			<PageHeader />
+			<PageHeader
+				title={"Markdown to HTML Converter"}
+				description={
+					"Convert your markdown text to HTML with live preview and syntax highlighting"
+				}
+				icons={[FileText, Code]}
+			/>
 
 			<Toolbar
 				viewMode={viewMode}

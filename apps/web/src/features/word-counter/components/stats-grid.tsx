@@ -1,7 +1,7 @@
 import { Clock, FileText, Hash, Layers, Type } from "lucide-react";
+import { StatCard } from "@/components";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { TextStats } from "../types";
-import { StatCard } from "./stat-card";
 
 interface StatsGridProps {
 	stats: TextStats;

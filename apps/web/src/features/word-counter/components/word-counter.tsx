@@ -1,9 +1,10 @@
 "use client";
 
+import { Hash, Type } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { PageHeader } from "@/components";
 import { useTextStats } from "../hooks/use-text-stats";
-import { PageHeader } from "./page-header";
 import { StatsGrid } from "./stats-grid";
 import { TextAnalysis } from "./text-analysis";
 import { TextInput } from "./text-input";
@@ -65,7 +66,13 @@ export function WordCounter() {
 
 	return (
 		<div className="container mx-auto space-y-6 p-6">
-			<PageHeader />
+			<PageHeader
+				title={"Word Counter"}
+				description={
+					"Analyze your text with real-time word, character, and line counting plus advanced text statistics"
+				}
+				icons={[Type, Hash]}
+			/>
 
 			<Toolbar
 				viewMode={viewMode}

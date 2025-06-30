@@ -15,40 +15,77 @@ import {
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
 
-const tools: {
+interface Tool {
 	title: string;
 	href: string;
 	description: string;
 	icon: React.ReactNode;
-}[] = [
-	{
-		title: "Markdown to HTML",
-		href: "/markdown-to-html",
-		description:
-			"Convert your markdown text to HTML with live preview and syntax highlighting.",
+}
+
+interface ToolCategory {
+	label: string;
+	icon: React.ReactNode;
+	tools: Tool[];
+}
+
+const toolCategories: {
+	text: ToolCategory;
+	image: ToolCategory;
+	data: ToolCategory;
+} = {
+	text: {
+		label: "Text Tools",
 		icon: <FileText className="h-4 w-4" />,
+		tools: [
+			{
+				title: "Markdown to HTML",
+				href: "/markdown-to-html",
+				description:
+					"Convert your markdown text to HTML with live preview and syntax highlighting.",
+				icon: <FileText className="h-4 w-4" />,
+			},
+			{
+				title: "Word Counter",
+				href: "/word-counter",
+				description: "Count words, characters, and analyze text statistics.",
+				icon: <Hash className="h-4 w-4" />,
+			},
+		],
 	},
-	{
-		title: "Word Counter",
-		href: "/word-counter",
-		description: "Count words, characters, and analyze text statistics.",
-		icon: <Hash className="h-4 w-4" />,
-	},
-	{
-		title: "Image Converter",
-		href: "/image-converter",
-		description:
-			"Convert images between different formats with customizable quality and resize options.",
+	image: {
+		label: "Image Tools",
 		icon: <ImageIcon className="h-4 w-4" />,
+		tools: [
+			{
+				title: "Image Converter",
+				href: "/image-converter",
+				description:
+					"Convert images between different formats with customizable quality and resize options.",
+				icon: <ImageIcon className="h-4 w-4" />,
+			},
+		],
 	},
-	{
-		title: "JSON Formatter",
-		href: "/json-formatter",
-		description:
-			"Validate, format, beautify, and minify your JSON data with our powerful online tool.",
+	data: {
+		label: "Data Tools",
 		icon: <FileJsonIcon className="h-4 w-4" />,
+		tools: [
+			{
+				title: "JSON Formatter",
+				href: "/json-formatter",
+				description:
+					"Validate, format, beautify, and minify your JSON data with our powerful online tool.",
+				icon: <FileJsonIcon className="h-4 w-4" />,
+			},
+			{
+				title: "JSON Converter",
+				href: "/json-converter",
+				description:
+					"Convert your JSON data between different formats with our powerful online tool.",
+				icon: <FileJsonIcon className="h-4 w-4" />,
+			},
+		],
 	},
-];
+};
 
 export function Navigation() {
 	return (
@@ -61,13 +98,60 @@ export function Navigation() {
 						</Link>
 					</NavigationMenuLink>
 				</NavigationMenuItem>
+				
+				{/* Text Tools */}
 				<NavigationMenuItem>
-					<NavigationMenuTrigger className="flex items-center">
-						Tools
+					<NavigationMenuTrigger className="flex items-center gap-2">
+						{toolCategories.text.icon}
+						{toolCategories.text.label}
 					</NavigationMenuTrigger>
 					<NavigationMenuContent>
-						<ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-							{tools.map((tool) => (
+						<ul className="grid w-[350px] gap-3 p-4 md:w-[400px]">
+							{toolCategories.text.tools.map((tool) => (
+								<ListItem
+									key={tool.title}
+									title={tool.title}
+									href={tool.href}
+									icon={tool.icon}
+								>
+									{tool.description}
+								</ListItem>
+							))}
+						</ul>
+					</NavigationMenuContent>
+				</NavigationMenuItem>
+				
+				{/* Image Tools */}
+				<NavigationMenuItem>
+					<NavigationMenuTrigger className="flex items-center gap-2">
+						{toolCategories.image.icon}
+						{toolCategories.image.label}
+					</NavigationMenuTrigger>
+					<NavigationMenuContent>
+						<ul className="grid w-[350px] gap-3 p-4 md:w-[400px]">
+							{toolCategories.image.tools.map((tool) => (
+								<ListItem
+									key={tool.title}
+									title={tool.title}
+									href={tool.href}
+									icon={tool.icon}
+								>
+									{tool.description}
+								</ListItem>
+							))}
+						</ul>
+					</NavigationMenuContent>
+				</NavigationMenuItem>
+				
+				{/* Data Tools */}
+				<NavigationMenuItem>
+					<NavigationMenuTrigger className="flex items-center gap-2">
+						{toolCategories.data.icon}
+						{toolCategories.data.label}
+					</NavigationMenuTrigger>
+					<NavigationMenuContent>
+						<ul className="grid w-[350px] gap-3 p-4 md:w-[400px] md:grid-cols-1">
+							{toolCategories.data.tools.map((tool) => (
 								<ListItem
 									key={tool.title}
 									title={tool.title}

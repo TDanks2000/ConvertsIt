@@ -3,6 +3,7 @@
 import { Download, Play, Settings2, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { PageHeader } from "@/components";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -10,7 +11,6 @@ import { useImageConverter } from "../hooks/use-image-converter";
 import { ConversionOptionsComponent as ConversionOptions } from "./conversion-options";
 import { FileUpload } from "./file-upload";
 import { ImagePreview } from "./image-preview";
-import { PageHeader } from "./page-header";
 import { StatsGrid } from "./stats-grid";
 
 export function ImageConverter() {

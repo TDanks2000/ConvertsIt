@@ -3,14 +3,14 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components";
-import { useJsonConverter } from "../hooks/use-json-converter";
+import { useYamlConverter } from "../hooks/use-yaml-converter";
 import type { ViewMode } from "../types";
 import { ConverterInput } from "./converter-input";
 import { ConverterOutput } from "./converter-output";
 import { StatsCard } from "./stats-card";
 import { Toolbar } from "./toolbar";
 
-export function JsonConverter() {
+export function YamlConverter() {
 	const {
 		input,
 		setInput,
@@ -22,7 +22,7 @@ export function JsonConverter() {
 		handleModeSwitch,
 		handleOptionsChange,
 		handleLoadSample,
-	} = useJsonConverter();
+	} = useYamlConverter();
 
 	const [viewMode, setViewMode] = useState<ViewMode>("split");
 
@@ -61,10 +61,12 @@ export function JsonConverter() {
 		}
 
 		try {
-			const outputType = conversionMode === "json-to-csv" ? "csv" : "json";
+			const outputType = conversionMode === "yaml-to-json" ? "json" : "yaml";
 			const filename = `converted-data.${outputType}`;
 			const mimeType =
-				conversionMode === "json-to-csv" ? "text/csv" : "application/json";
+				conversionMode === "yaml-to-json"
+					? "application/json"
+					: "application/x-yaml";
 
 			const blob = new Blob([conversionResult.data], { type: mimeType });
 			const url = URL.createObjectURL(blob);
@@ -94,8 +96,8 @@ export function JsonConverter() {
 		<div className="container mx-auto max-w-6xl p-6">
 			<div className="space-y-6">
 				<PageHeader
-					title="JSON Converter"
-					description="Convert between JSON and CSV formats with ease. Transform JSON arrays to CSV tables or CSV data back to JSON objects with customizable options."
+					title="YAML Converter"
+					description="Convert between YAML and JSON formats with ease. Transform YAML data to JSON objects or JSON data back to YAML with customizable formatting options and syntax validation."
 				/>
 
 				<Toolbar

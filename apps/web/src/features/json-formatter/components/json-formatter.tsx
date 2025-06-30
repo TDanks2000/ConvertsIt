@@ -2,11 +2,11 @@
 
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { PageHeader } from "@/components";
 import { useJsonFormatter } from "../hooks/use-json-formatter";
 import type { ViewMode } from "../types";
 import { JsonInput } from "./json-input";
 import { JsonOutput } from "./json-output";
-import { PageHeader } from "./page-header";
 import { StatsCard } from "./stats-card";
 import { Toolbar } from "./toolbar";
 
@@ -95,7 +95,10 @@ export function JsonFormatter() {
 	return (
 		<div className="container mx-auto max-w-6xl p-6">
 			<div className="space-y-6">
-				<PageHeader />
+				<PageHeader
+					title="JSON Formatter"
+					description="Validate, format, beautify, and minify your JSON data with our powerful online tool. Perfect for developers and data analysts."
+				/>
 
 				<Toolbar
 					formatMode={formatMode}
