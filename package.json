@@ -1,5 +1,6 @@
 {
 	"name": "convertsit",
+	"description": "A comprehensive collection of free online utility tools designed to simplify your everyday tasks and boost productivity. Featuring powerful text processing tools like our precise word counter and efficient Markdown to HTML converter, along with essential web-based utilities for various needs.",
 	"private": true,
 	"workspaces": [
 		"apps/*",
