@@ -73,7 +73,8 @@ export function HashGenerator() {
 					<div>
 						<h4 className="mb-2 font-medium text-sm">MD5 (128-bit)</h4>
 						<p className="text-muted-foreground text-sm">
-							Fast but cryptographically broken. Use only for non-security purposes like checksums.
+							Fast but cryptographically broken. Use only for non-security
+							purposes like checksums.
 						</p>
 					</div>
 					<div>
@@ -85,13 +86,15 @@ export function HashGenerator() {
 					<div>
 						<h4 className="mb-2 font-medium text-sm">SHA-256 (256-bit)</h4>
 						<p className="text-muted-foreground text-sm">
-							Secure and widely used. Recommended for most applications requiring cryptographic security.
+							Secure and widely used. Recommended for most applications
+							requiring cryptographic security.
 						</p>
 					</div>
 					<div>
 						<h4 className="mb-2 font-medium text-sm">SHA-512 (512-bit)</h4>
 						<p className="text-muted-foreground text-sm">
-							Highest security level. Ideal for applications requiring maximum hash strength.
+							Highest security level. Ideal for applications requiring maximum
+							hash strength.
 						</p>
 					</div>
 				</div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { FileJsonIcon, FileText, Hash, ImageIcon, Shield } from "lucide-react";
+import { FileJsonIcon, FileText, Hash, ImageIcon, QrCode, Shield } from "lucide-react";
 import Link from "next/link";
 import {
 	type ComponentPropsWithoutRef,
@@ -54,10 +54,18 @@ const toolCategories: ToolCategory[] = [
 			},
 			{
 				title: "Hash Generator",
-				href: "/hash-generator",
-				description: "Generate secure hashes using MD5, SHA-1, SHA-256, and SHA-512 algorithms.",
-				icon: <Shield className="h-4 w-4" />,
-			},
+			href: "/hash-generator",
+			description:
+				"Generate secure hashes using MD5, SHA-1, SHA-256, and SHA-512 algorithms.",
+			icon: <Shield className="h-4 w-4" />,
+		},
+		{
+			title: "QR Code Generator",
+			href: "/qr-code-generator",
+			description:
+				"Generate customizable QR codes for text, URLs, and any data with different options.",
+			icon: <QrCode className="h-4 w-4" />,
+		},
 		],
 	},
 	{

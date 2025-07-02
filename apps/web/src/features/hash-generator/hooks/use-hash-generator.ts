@@ -44,7 +44,9 @@ export function useHashGenerator() {
 			const allResults = await generateMultipleHashes(input, algorithms);
 			setResults(allResults);
 		} catch (err) {
-			setError(err instanceof Error ? err.message : "Failed to generate hashes");
+			setError(
+				err instanceof Error ? err.message : "Failed to generate hashes",
+			);
 		} finally {
 			setIsGenerating(false);
 		}

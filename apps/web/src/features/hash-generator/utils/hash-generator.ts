@@ -7,8 +7,6 @@ export async function generateHash(
 	input: string,
 	algorithm: HashAlgorithm,
 ): Promise<HashResult> {
-	const startTime = performance.now();
-
 	if (!input) {
 		throw new Error("Input cannot be empty");
 	}
