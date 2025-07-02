@@ -1,6 +1,6 @@
 "use client";
 
-import { FileJsonIcon, FileText, Hash, ImageIcon } from "lucide-react";
+import { FileJsonIcon, FileText, Hash, ImageIcon, Shield } from "lucide-react";
 import Link from "next/link";
 import {
 	type ComponentPropsWithoutRef,
@@ -51,6 +51,12 @@ const toolCategories: ToolCategory[] = [
 				href: "/word-counter",
 				description: "Count words, characters, and analyze text statistics.",
 				icon: <Hash className="h-4 w-4" />,
+			},
+			{
+				title: "Hash Generator",
+				href: "/hash-generator",
+				description: "Generate secure hashes using MD5, SHA-1, SHA-256, and SHA-512 algorithms.",
+				icon: <Shield className="h-4 w-4" />,
 			},
 		],
 	},
