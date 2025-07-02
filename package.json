@@ -1,11 +1,12 @@
 {
 	"name": "convertsit",
+	"devDependencies": {
+		"turbo": "^2.5.4",
+		"@biomejs/biome": "^2.0.0"
+	},
 	"description": "A comprehensive collection of free online utility tools designed to simplify your everyday tasks and boost productivity. Featuring powerful text processing tools like our precise word counter and efficient Markdown to HTML converter, along with essential web-based utilities for various needs.",
+	"packageManager": "bun@1.2.18",
 	"private": true,
-	"workspaces": [
-		"apps/*",
-		"packages/*"
-	],
 	"scripts": {
 		"check": "biome check --write .",
 		"dev": "turbo dev",
@@ -15,9 +16,8 @@
 		"dev:web": "turbo -F web dev",
 		"dev:server": "turbo -F server dev"
 	},
-	"devDependencies": {
-		"turbo": "^2.5.4",
-		"@biomejs/biome": "^2.0.0"
-	},
-	"packageManager": "bun@1.2.18"
+	"workspaces": [
+		"apps/*",
+		"packages/*"
+	]
 }

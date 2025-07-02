@@ -58,11 +58,19 @@ export function ImageConverter() {
 		toast.success("All images converted!");
 	};
 
-	const handleDownloadAll = () => {
+	const handleDownloadAll = async () => {
 		if (!hasCompletedImages) return;
 
-		downloadAllImages();
-		toast.success("Download started!");
+		const loadingToast = toast.loading("Creating ZIP file...");
+
+		try {
+			await downloadAllImages();
+			toast.success("ZIP file downloaded successfully!", { id: loadingToast });
+		} catch {
+			toast.error("Failed to create ZIP file, downloading individually", {
+				id: loadingToast,
+			});
+		}
 	};
 
 	const handleClearAll = () => {

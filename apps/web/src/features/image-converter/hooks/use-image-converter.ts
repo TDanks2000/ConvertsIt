@@ -13,6 +13,32 @@ export function useImageConverter() {
 		},
 	);
 
+	// Custom setter that resets completed images to pending when options change
+	const updateConversionOptions = useCallback((newOptions: ConversionOptions) => {
+		setConversionOptions(newOptions);
+		
+		// Reset completed images to pending status so they can be re-converted
+		setImages((prev) =>
+			prev.map((img) => {
+				if (img.status === "completed") {
+					// Clean up the old converted URL
+					if (img.convertedUrl) {
+						URL.revokeObjectURL(img.convertedUrl);
+					}
+					return {
+						...img,
+						status: "pending" as const,
+						progress: 0,
+						convertedUrl: undefined,
+						convertedSize: undefined,
+						error: undefined,
+					};
+				}
+				return img;
+			}),
+		);
+	}, []);
+
 	const addImages = useCallback((files: File[]) => {
 		const validFiles = files.filter(ImageConverter.isValidImageType);
 		const newImages = validFiles.map(ImageConverter.createImageFile);
@@ -153,10 +179,10 @@ export function useImageConverter() {
 		[images, conversionOptions.format],
 	);
 
-	const downloadAllImages = useCallback(() => {
+	const downloadAllImages = useCallback(async () => {
 		const completedImages = images.filter((img) => img.status === "completed");
-		ImageConverter.downloadAllAsZip(completedImages);
-	}, [images]);
+		await ImageConverter.downloadAllAsZip(completedImages, conversionOptions.format);
+	}, [images, conversionOptions.format]);
 
 	const getStats = useCallback((): ImageStats => {
 		const totalFiles = images.length;
@@ -184,7 +210,7 @@ export function useImageConverter() {
 		images,
 		isConverting,
 		conversionOptions,
-		setConversionOptions,
+		setConversionOptions: updateConversionOptions,
 		addImages,
 		removeImage,
 		clearAllImages,

@@ -1,3 +1,4 @@
+import { blobUrlToZipFile, downloadAsZip } from "@/utils/zip";
 import type { ConversionOptions, ConversionResult, ImageFile } from "../types";
 
 export namespace ImageConverter {
@@ -13,7 +14,7 @@ export namespace ImageConverter {
 					const img = new Image();
 					img.onload = () => {
 						const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" width="${options.width || img.width}" height="${options.height || img.height}" viewBox="0 0 ${img.width} ${img.height}"><image href="${img.src}" width="${img.width}" height="${img.height}"/></svg>`;
-						const blob = new Blob([svgContent], { type: 'image/svg+xml' });
+						const blob = new Blob([svgContent], { type: "image/svg+xml" });
 						const url = URL.createObjectURL(blob);
 						resolve({
 							success: true,
@@ -73,8 +74,10 @@ export namespace ImageConverter {
 					// Convert to desired format
 					const mimeType = `image/${options.format}`;
 					const quality =
-						(options.format === "jpeg" || options.format === "webp" || options.format === "avif") 
-							? options.quality / 100 
+						options.format === "jpeg" ||
+						options.format === "webp" ||
+						options.format === "avif"
+							? options.quality / 100
 							: undefined;
 
 					canvas.toBlob(
@@ -171,16 +174,51 @@ export namespace ImageConverter {
 		document.body.removeChild(link);
 	}
 
-	export function downloadAllAsZip(images: ImageFile[]): void {
-		// This would require a zip library like JSZip
-		// For now, we'll download them individually
-		images.forEach((image, index) => {
-			if (image.convertedUrl) {
-				setTimeout(() => {
-					if (!image?.convertedUrl) return;
-					downloadImage(image.convertedUrl, image.name);
-				}, index * 100); // Stagger downloads
-			}
-		});
+	export async function downloadAllAsZip(
+		images: ImageFile[],
+		format: string,
+	): Promise<void> {
+		try {
+			// Convert images to ZipFile format
+			const zipFiles = await Promise.all(
+				images
+					.filter((image) => image.convertedUrl)
+					.map(async (image) => {
+						if (!image.convertedUrl) throw new Error("No converted URL");
+
+						// Generate the correct filename with the converted format extension
+						const extension = format === "jpeg" ? "jpg" : format;
+						// Remove the original extension and add the new one
+						const baseName = image.name.replace(/\.[^/.]+$/, "");
+						const filename = `${baseName}.${extension}`;
+
+						return await blobUrlToZipFile(image.convertedUrl, filename);
+					}),
+			);
+
+			// Download as ZIP file
+			await downloadAsZip(zipFiles, "converted-images.zip", {
+				compressionLevel: 6,
+			});
+		} catch (error) {
+			// Fallback to individual downloads if ZIP creation fails
+			console.error(
+				"Failed to create ZIP, falling back to individual downloads:",
+				error,
+			);
+			images.forEach((image, index) => {
+				if (image.convertedUrl) {
+					setTimeout(() => {
+						if (!image?.convertedUrl) return;
+						// Generate the correct filename with the converted format extension
+						const extension = format === "jpeg" ? "jpg" : format;
+						// Remove the original extension and add the new one
+						const baseName = image.name.replace(/\.[^/.]+$/, "");
+						const filename = `${baseName}.${extension}`;
+						downloadImage(image.convertedUrl, filename);
+					}, index * 100); // Stagger downloads
+				}
+			});
+		}
 	}
 }
