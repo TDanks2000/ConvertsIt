@@ -5,7 +5,14 @@ import { ToolPreviewCard } from "@/components/tool-preview-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { toolCategories } from "@/constants/tools";
+import { 
+	toolCategories,
+	getAllTools,
+	getFeaturedTools,
+	getPopularTools,
+	getRegularTools,
+	getToolsByCategory
+} from "@/constants/tools";
 
 interface CategoryTabsProps {
 	defaultCategory?: string;
@@ -40,33 +47,18 @@ export function CategoryTabs({
 	);
 
 	// Get all tools for "All" tab
-	const allTools = toolCategories.flatMap((category) =>
-		category.tools.map((tool) => ({ ...tool, category: category.label })),
-	);
+	const allTools = getAllTools();
 
-	// Add popular and featured flags to tools
-	const enhancedAllTools = allTools.map((tool, index) => ({
-		...tool,
-		isPopular: index < 3, // First 3 tools are popular
-		isFeatured: index === 0, // First tool is featured
-		usageCount:
-			index === 0
-				? "2.1k"
-				: index === 1
-					? "1.8k"
-					: index === 2
-						? "1.5k"
-						: undefined,
-	}));
+	// Get categorized tools
+	const featuredTools = getFeaturedTools();
+	const popularTools = getPopularTools();
+	const regularTools = getRegularTools();
 
 	const getCurrentTools = () => {
 		if (activeCategory === "all") {
-			return enhancedAllTools;
+			return allTools;
 		}
-		const category = toolCategories.find((cat) => cat.label === activeCategory);
-		return category
-			? category.tools.map((tool) => ({ ...tool, category: category.label }))
-			: [];
+		return getToolsByCategory(activeCategory);
 	};
 
 	const currentTools = getCurrentTools();
@@ -146,11 +138,9 @@ export function CategoryTabs({
 							</Badge>
 						</div>
 						<div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-							{currentTools
-								.filter((tool) => tool.isFeatured)
-								.map((tool) => (
-									<ToolPreviewCard key={tool.href} {...tool} size="large" />
-								))}
+							{featuredTools.map((tool) => (
+								<ToolPreviewCard key={tool.href} {...tool} size="large" />
+							))}
 						</div>
 					</div>
 				)}
@@ -163,11 +153,9 @@ export function CategoryTabs({
 							<Badge variant="outline">Trending</Badge>
 						</div>
 						<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-							{currentTools
-								.filter((tool) => tool.isPopular && !tool.isFeatured)
-								.map((tool) => (
-									<ToolPreviewCard key={tool.href} {...tool} size="default" />
-								))}
+							{popularTools.map((tool) => (
+								<ToolPreviewCard key={tool.href} {...tool} size="default" />
+							))}
 						</div>
 					</div>
 				)}
@@ -178,15 +166,12 @@ export function CategoryTabs({
 						<div className="flex items-center gap-2">
 							<h3 className="font-semibold text-xl">All Tools</h3>
 							<Badge variant="secondary">
-								{currentTools.filter((tool) => !tool.isPopular).length} tools
+								{activeCategory === "all" ? regularTools.length : currentTools.length} tools
 							</Badge>
 						</div>
 					)}
 					<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-						{(activeCategory === "all"
-							? currentTools.filter((tool) => !tool.isPopular)
-							: currentTools
-						).map((tool) => (
+						{(activeCategory === "all" ? regularTools : currentTools).map((tool) => (
 							<ToolPreviewCard key={tool.href} {...tool} size="default" />
 						))}
 

@@ -38,12 +38,7 @@ export function SearchBar({
 					.slice(0, 6)
 			: [];
 
-	// Popular tools (first 3 tools from different categories)
-	const popularTools = [
-		toolCategories[1].tools[0], // JSON Formatter
-		toolCategories[0].tools[0], // Markdown to HTML
-		toolCategories[3].tools[0], // Hash Generator
-	];
+	const popularTools = allTools.filter((category) => category.isPopular);
 
 	return (
 		<div className="relative z-50 mx-auto w-full max-w-2xl">

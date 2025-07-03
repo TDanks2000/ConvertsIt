@@ -22,6 +22,8 @@ export interface Tool {
 	icon: ReactNode;
 	isPopular?: boolean;
 	isFeatured?: boolean;
+	usageCount?: string;
+	priority?: number; // Lower numbers = higher priority for sorting
 }
 
 export interface ToolCategory {
@@ -47,6 +49,8 @@ export const toolCategories: ToolCategory[] = [
 					"Transform markdown into clean HTML with live preview and syntax highlighting.",
 				icon: <FileText className="h-4 w-4" />,
 				isPopular: true,
+				usageCount: "1.8k",
+				priority: 2,
 			},
 			{
 				title: "Word Counter",
@@ -54,6 +58,7 @@ export const toolCategories: ToolCategory[] = [
 				description:
 					"Analyze text statistics including words, characters, and readability metrics.",
 				icon: <Hash className="h-4 w-4" />,
+				priority: 4,
 			},
 		],
 	},
@@ -71,6 +76,9 @@ export const toolCategories: ToolCategory[] = [
 					"Validate, format, and beautify JSON data with advanced formatting options.",
 				icon: <Code2 className="h-4 w-4" />,
 				isFeatured: true,
+				isPopular: true,
+				usageCount: "2.1k",
+				priority: 1,
 			},
 			{
 				title: "JSON Converter",
@@ -78,6 +86,7 @@ export const toolCategories: ToolCategory[] = [
 				description:
 					"Convert JSON to CSV, XML, YAML and other formats seamlessly.",
 				icon: <FileJsonIcon className="h-4 w-4" />,
+				priority: 5,
 			},
 			{
 				title: "YAML Converter",
@@ -85,6 +94,7 @@ export const toolCategories: ToolCategory[] = [
 				description:
 					"Transform YAML data between multiple formats with validation.",
 				icon: <Settings className="h-4 w-4" />,
+				priority: 6,
 			},
 		],
 	},
@@ -101,7 +111,9 @@ export const toolCategories: ToolCategory[] = [
 				description:
 					"Convert between image formats with quality control and batch processing.",
 				icon: <ImageIcon className="h-4 w-4" />,
-				isFeatured: true,
+				isPopular: true,
+				usageCount: "1.5k",
+				priority: 3,
 			},
 			{
 				title: "Image Resizer",
@@ -109,6 +121,7 @@ export const toolCategories: ToolCategory[] = [
 				description:
 					"Resize images with smart cropping and aspect ratio preservation.",
 				icon: <Maximize2 className="h-4 w-4" />,
+				priority: 7,
 			},
 		],
 	},
@@ -125,6 +138,7 @@ export const toolCategories: ToolCategory[] = [
 				description:
 					"Generate secure hashes with MD5, SHA-1, SHA-256, and SHA-512 algorithms.",
 				icon: <Shield className="h-4 w-4" />,
+				priority: 8,
 			},
 			{
 				title: "QR Code Generator",
@@ -132,6 +146,7 @@ export const toolCategories: ToolCategory[] = [
 				description:
 					"Create customizable QR codes with logo embedding and styling options.",
 				icon: <QrCode className="h-4 w-4" />,
+				priority: 9,
 			},
 		],
 	},
@@ -140,3 +155,37 @@ export const toolCategories: ToolCategory[] = [
 export const toolLength = toolCategories.flatMap(
 	(category) => category.tools,
 ).length;
+
+// Utility functions for tool management
+export const getAllTools = () => {
+	return toolCategories.flatMap((category) =>
+		category.tools.map((tool) => ({ ...tool, category: category.label })),
+	);
+};
+
+export const getFeaturedTools = () => {
+	return getAllTools()
+		.filter((tool) => tool.isFeatured)
+		.sort((a, b) => (a.priority || 999) - (b.priority || 999));
+};
+
+export const getPopularTools = () => {
+	return getAllTools()
+		.filter((tool) => tool.isPopular && !tool.isFeatured)
+		.sort((a, b) => (a.priority || 999) - (b.priority || 999));
+};
+
+export const getRegularTools = () => {
+	return getAllTools()
+		.filter((tool) => !tool.isPopular)
+		.sort((a, b) => (a.priority || 999) - (b.priority || 999));
+};
+
+export const getToolsByCategory = (categoryLabel: string) => {
+	const category = toolCategories.find((cat) => cat.label === categoryLabel);
+	return category
+		? category.tools
+				.map((tool) => ({ ...tool, category: category.label }))
+				.sort((a, b) => (a.priority || 999) - (b.priority || 999))
+		: [];
+};
