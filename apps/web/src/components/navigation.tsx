@@ -1,13 +1,19 @@
 "use client";
 
 import {
+	Code2,
+	Database,
 	FileJsonIcon,
 	FileText,
 	Hash,
 	ImageIcon,
 	Maximize2,
+	Palette,
 	QrCode,
+	Settings,
 	Shield,
+	Type,
+	Zap,
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -43,87 +49,93 @@ interface ToolCategory {
 
 const toolCategories: ToolCategory[] = [
 	{
-		label: "Text Tools",
-		icon: <FileText className="h-4 w-4" />,
-		ulClassName: "md:grid-cols-2",
+		label: "Text & Content",
+		icon: <Type className="h-4 w-4" />,
+		ulClassName: "grid-cols-1 lg:grid-cols-2",
 		tools: [
 			{
 				title: "Markdown to HTML",
 				href: "/markdown-to-html",
 				description:
-					"Convert your markdown text to HTML with live preview and syntax highlighting.",
+					"Transform markdown into clean HTML with live preview and syntax highlighting.",
 				icon: <FileText className="h-4 w-4" />,
 			},
 			{
 				title: "Word Counter",
 				href: "/word-counter",
-				description: "Count words, characters, and analyze text statistics.",
+				description:
+					"Analyze text statistics including words, characters, and readability metrics.",
 				icon: <Hash className="h-4 w-4" />,
 			},
-			{
-				title: "Hash Generator",
-				href: "/hash-generator",
-				description:
-					"Generate secure hashes using MD5, SHA-1, SHA-256, and SHA-512 algorithms.",
-				icon: <Shield className="h-4 w-4" />,
-			},
-			{
-				title: "QR Code Generator",
-				href: "/qr-code-generator",
-				description:
-					"Generate customizable QR codes for text, URLs, and any data with different options.",
-				icon: <QrCode className="h-4 w-4" />,
-			},
 		],
 	},
 	{
-		label: "Image Tools",
-		icon: <ImageIcon className="h-4 w-4" />,
-		// Updated to 2 columns for better layout with multiple tools
-		ulClassName: "md:grid-cols-2",
-		tools: [
-			{
-				title: "Image Converter",
-				href: "/image-converter",
-				description:
-					"Convert images between different formats with customizable quality and resize options.",
-				icon: <ImageIcon className="h-4 w-4" />,
-			},
-			{
-				title: "Image Resizer",
-				href: "/image-resizer",
-				description:
-					"Resize your images to specific dimensions while maintaining quality and aspect ratio.",
-				icon: <Maximize2 className="h-4 w-4" />,
-			},
-		],
-	},
-	{
-		label: "Data Tools",
-		icon: <FileJsonIcon className="h-4 w-4" />,
-		// Using 2 columns for better space efficiency with 3 items
-		ulClassName: "md:grid-cols-2",
+		label: "Data & Code",
+		icon: <Database className="h-4 w-4" />,
+		ulClassName: "grid-cols-1 lg:grid-cols-2 xl:grid-cols-3",
 		tools: [
 			{
 				title: "JSON Formatter",
 				href: "/json-formatter",
 				description:
-					"Validate, format, beautify, and minify your JSON data with our powerful online tool.",
-				icon: <FileJsonIcon className="h-4 w-4" />,
+					"Validate, format, and beautify JSON data with advanced formatting options.",
+				icon: <Code2 className="h-4 w-4" />,
 			},
 			{
 				title: "JSON Converter",
 				href: "/json-converter",
 				description:
-					"Convert your JSON data between different formats with our powerful online tool.",
+					"Convert JSON to CSV, XML, YAML and other formats seamlessly.",
 				icon: <FileJsonIcon className="h-4 w-4" />,
 			},
 			{
 				title: "YAML Converter",
 				href: "/yaml-converter",
 				description:
-					"Convert your YAML data between different formats with our powerful online tool.",
-				icon: <FileJsonIcon className="h-4 w-4" />,
+					"Transform YAML data between multiple formats with validation.",
+				icon: <Settings className="h-4 w-4" />,
+			},
+		],
+	},
+	{
+		label: "Image & Media",
+		icon: <Palette className="h-4 w-4" />,
+		ulClassName: "grid-cols-1 lg:grid-cols-2",
+		tools: [
+			{
+				title: "Image Converter",
+				href: "/image-converter",
+				description:
+					"Convert between image formats with quality control and batch processing.",
+				icon: <ImageIcon className="h-4 w-4" />,
+			},
+			{
+				title: "Image Resizer",
+				href: "/image-resizer",
+				description:
+					"Resize images with smart cropping and aspect ratio preservation.",
+				icon: <Maximize2 className="h-4 w-4" />,
+			},
+		],
+	},
+	{
+		label: "Security & Utilities",
+		icon: <Zap className="h-4 w-4" />,
+		ulClassName: "grid-cols-1 lg:grid-cols-2",
+		tools: [
+			{
+				title: "Hash Generator",
+				href: "/hash-generator",
+				description:
+					"Generate secure hashes with MD5, SHA-1, SHA-256, and SHA-512 algorithms.",
+				icon: <Shield className="h-4 w-4" />,
+			},
+			{
+				title: "QR Code Generator",
+				href: "/qr-code-generator",
+				description:
+					"Create customizable QR codes with logo embedding and styling options.",
+				icon: <QrCode className="h-4 w-4" />,
 			},
 		],
 	},
@@ -148,23 +160,28 @@ export function Navigation() {
 							{category.label}
 						</NavigationMenuTrigger>
 						<NavigationMenuContent>
-							<ul
-								className={cn(
-									"grid w-[350px] gap-3 p-4 md:w-[400px]",
-									category.ulClassName,
-								)}
-							>
-								{category.tools.map((tool) => (
-									<ListItem
-										key={tool.title}
-										title={tool.title}
-										href={tool.href}
-										icon={tool.icon}
-									>
-										{tool.description}
-									</ListItem>
-								))}
-							</ul>
+							<div className="w-[400px] p-6 md:w-[500px] lg:w-[600px] xl:w-[700px]">
+								<div className="mb-4 flex items-center gap-2 border-border border-b pb-3">
+									<div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+										{category.icon}
+									</div>
+									<h3 className="font-semibold text-foreground text-sm">
+										{category.label}
+									</h3>
+								</div>
+								<ul className={cn("grid gap-2", category.ulClassName)}>
+									{category.tools.map((tool) => (
+										<ListItem
+											key={tool.title}
+											title={tool.title}
+											href={tool.href}
+											icon={tool.icon}
+										>
+											{tool.description}
+										</ListItem>
+									))}
+								</ul>
+							</div>
 						</NavigationMenuContent>
 					</NavigationMenuItem>
 				))}
@@ -186,16 +203,20 @@ const ListItem = forwardRef<
 				<Link
 					ref={ref}
 					className={cn(
-						"block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+						"group block select-none space-y-2 rounded-lg border border-transparent p-4 leading-none no-underline outline-none transition-all duration-200 hover:border-border hover:bg-accent/50 hover:shadow-sm focus:bg-accent focus:text-accent-foreground",
 						className,
 					)}
 					{...props}
 				>
-					<div className="flex items-center gap-2 font-medium text-sm leading-none">
-						{icon}
-						{title}
+					<div className="flex items-center gap-3">
+						<div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary/10 text-primary transition-colors group-hover:bg-primary/20">
+							{icon}
+						</div>
+						<div className="font-medium text-foreground text-sm leading-none group-hover:text-accent-foreground">
+							{title}
+						</div>
 					</div>
-					<p className="line-clamp-2 min-h-[calc(2*1.375*1em)] text-muted-foreground text-sm leading-snug">
+					<p className="line-clamp-2 text-muted-foreground text-xs leading-relaxed group-hover:text-muted-foreground/80">
 						{children}
 					</p>
 				</Link>
