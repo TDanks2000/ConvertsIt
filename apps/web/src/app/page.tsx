@@ -135,7 +135,7 @@ export default function Home() {
 							</Button>
 							<Button variant="outline" size="lg" asChild>
 								<Link
-									href="https://github.com/convertsit"
+									href="https://github.com/tdanks2000/convertsit"
 									target="_blank"
 									rel="noopener noreferrer"
 								>
