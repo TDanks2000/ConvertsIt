@@ -5,13 +5,13 @@ import { ToolPreviewCard } from "@/components/tool-preview-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { 
-	toolCategories,
+import {
 	getAllTools,
 	getFeaturedTools,
 	getPopularTools,
 	getRegularTools,
-	getToolsByCategory
+	getToolsByCategory,
+	toolCategories,
 } from "@/constants/tools";
 
 interface CategoryTabsProps {
@@ -166,14 +166,19 @@ export function CategoryTabs({
 						<div className="flex items-center gap-2">
 							<h3 className="font-semibold text-xl">All Tools</h3>
 							<Badge variant="secondary">
-								{activeCategory === "all" ? regularTools.length : currentTools.length} tools
+								{activeCategory === "all"
+									? regularTools.length
+									: currentTools.length}{" "}
+								tools
 							</Badge>
 						</div>
 					)}
 					<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-						{(activeCategory === "all" ? regularTools : currentTools).map((tool) => (
-							<ToolPreviewCard key={tool.href} {...tool} size="default" />
-						))}
+						{(activeCategory === "all" ? regularTools : currentTools).map(
+							(tool) => (
+								<ToolPreviewCard key={tool.href} {...tool} size="default" />
+							),
+						)}
 
 						{/* Coming Soon Card */}
 						{activeCategory !== "all" && (
