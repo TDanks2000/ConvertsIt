@@ -107,10 +107,8 @@ export function generateQRCodeFilename(value: string, format = "png"): string {
  */
 export function canvasToDataUrl(
 	canvas: HTMLCanvasElement,
-	format = "png",
 ): string {
-	const mimeType = `image/${format}`;
-	return canvas.toDataURL(mimeType);
+	return canvas.toDataURL('image/png');
 }
 
 /**
@@ -180,10 +178,16 @@ export function downloadQRCode(
 					img.onerror = () => reject(new Error("Failed to load SVG"));
 
 					const svgData = new XMLSerializer().serializeToString(svgElement);
-					const svgBlob = new Blob([svgData], {
-						type: "image/svg+xml;charset=utf-8",
-					});
-					img.src = URL.createObjectURL(svgBlob);
+				const svgBlob = new Blob([svgData], {
+					type: "image/svg+xml;charset=utf-8",
+				});
+				const svgUrl = URL.createObjectURL(svgBlob);
+				img.src = svgUrl;
+				
+				// Clean up blob URL after image loads or fails
+				const cleanup = () => URL.revokeObjectURL(svgUrl);
+				img.addEventListener('load', cleanup, { once: true });
+				img.addEventListener('error', cleanup, { once: true });
 				} else {
 					reject(new Error("SVG element not found"));
 				}
@@ -232,9 +236,9 @@ export function getContrastColor(hexColor: string): string {
 	const color = hexColor.replace("#", "");
 
 	// Convert to RGB
-	const r = Number.parseInt(color.substr(0, 2), 16);
-	const g = Number.parseInt(color.substr(2, 2), 16);
-	const b = Number.parseInt(color.substr(4, 2), 16);
+	const r = Number.parseInt(color.substring(0, 2), 16);
+	const g = Number.parseInt(color.substring(2, 4), 16);
+	const b = Number.parseInt(color.substring(4, 6), 16);
 
 	// Calculate luminance
 	const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;

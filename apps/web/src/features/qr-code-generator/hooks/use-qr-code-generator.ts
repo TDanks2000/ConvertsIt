@@ -31,7 +31,7 @@ export function useQRCodeGenerator() {
 		[],
 	);
 
-	const generateQRCode = useCallback(async () => {
+	const generateQRCode = useCallback(() => {
 		const validation = validateQRCodeInput(input);
 		if (!validation.isValid) {
 			setError(validation.error || "Invalid input");
@@ -42,9 +42,6 @@ export function useQRCodeGenerator() {
 		setError(null);
 
 		try {
-			// Small delay to show loading state
-			await new Promise((resolve) => setTimeout(resolve, 100));
-
 			const qrOptions: QRCodeOptions = {
 				...options,
 				value: input,
@@ -67,8 +64,10 @@ export function useQRCodeGenerator() {
 	}, [input.length, updateOption]);
 
 	const resetOptions = useCallback(() => {
-		setOptions(DEFAULT_OPTIONS);
-	}, []);
+		setOptions({ ...DEFAULT_OPTIONS, value: input });
+		setResult(null);
+		setError(null);
+	}, [input]);
 
 	const clearAll = useCallback(() => {
 		setInput("");
@@ -87,10 +86,7 @@ export function useQRCodeGenerator() {
 		setError(null);
 	}, []);
 
-	const clearResult = useCallback(() => {
-		setResult(null);
-		setError(null);
-	}, []);
+
 
 	return {
 		input,
@@ -105,7 +101,7 @@ export function useQRCodeGenerator() {
 		resetOptions,
 		clearInput,
 		clearAll,
-		clearResult,
+
 		hasInput: !!input.trim(),
 		hasResult: !!result,
 	};

@@ -1,11 +1,11 @@
 "use client";
 
 import { Palette, RotateCcw, Settings, Wand2 } from "lucide-react";
+import { ColorPicker } from "@/components/color-picker/color-picker";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
 	Select,
@@ -17,10 +17,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
 import type { QRCodeLevel, QRCodeOptions } from "../types";
-import {
-	getErrorCorrectionDescription,
-	isValidHexColor,
-} from "../utils/qr-code-generator";
+import { getErrorCorrectionDescription } from "../utils/qr-code-generator";
 
 interface QRCodeOptionsProps {
 	options: QRCodeOptions;
@@ -41,13 +38,26 @@ const ERROR_CORRECTION_LEVELS: { value: QRCodeLevel; label: string }[] = [
 	{ value: "H", label: "High (30%)" },
 ];
 
-const PRESET_COLORS = [
-	{ name: "Black", value: "#000000" },
-	{ name: "Blue", value: "#3B82F6" },
-	{ name: "Green", value: "#10B981" },
-	{ name: "Red", value: "#EF4444" },
-	{ name: "Purple", value: "#8B5CF6" },
-	{ name: "Orange", value: "#F97316" },
+const FOREGROUND_PRESET_COLORS = [
+	"#000000",
+	"#3B82F6",
+	"#10B981",
+	"#EF4444",
+	"#8B5CF6",
+	"#F97316",
+	"#1F2937",
+	"#DC2626",
+];
+
+const BACKGROUND_PRESET_COLORS = [
+	"#FFFFFF",
+	"#F3F4F6",
+	"#E5E7EB",
+	"#FEF3C7",
+	"#DBEAFE",
+	"#D1FAE5",
+	"#FCE7F3",
+	"#F3E8FF",
 ];
 
 export function QRCodeOptionsComponent({
@@ -58,15 +68,6 @@ export function QRCodeOptionsComponent({
 	inputLength,
 	disabled = false,
 }: QRCodeOptionsProps) {
-	const handleColorChange = (
-		colorType: "fgColor" | "bgColor",
-		value: string,
-	) => {
-		if (isValidHexColor(value) || value === "") {
-			onUpdateOption(colorType, value);
-		}
-	};
-
 	return (
 		<Card>
 			<CardHeader>
@@ -159,30 +160,16 @@ export function QRCodeOptionsComponent({
 							Foreground (QR Code)
 						</Label>
 						<div className="flex items-center gap-2">
-							<div
-								className="h-8 w-8 rounded border"
-								style={{ backgroundColor: options.fgColor }}
-							/>
-							<Input
+							<ColorPicker
 								value={options.fgColor}
-								onChange={(e) => handleColorChange("fgColor", e.target.value)}
-								placeholder="#000000"
+								onChange={(color) => onUpdateOption("fgColor", color)}
 								disabled={disabled}
-								className="font-mono text-sm"
+								customPresets={FOREGROUND_PRESET_COLORS}
+								hexInputPlaceholder="#000000"
 							/>
-						</div>
-						<div className="flex flex-wrap gap-1">
-							{PRESET_COLORS.map((color) => (
-								<button
-									key={`fg-${color.value}`}
-									type="button"
-									onClick={() => onUpdateOption("fgColor", color.value)}
-									disabled={disabled}
-									className="h-6 w-6 rounded border transition-transform hover:scale-110"
-									style={{ backgroundColor: color.value }}
-									title={color.name}
-								/>
-							))}
+							<span className="font-mono text-muted-foreground text-sm">
+								{options.fgColor}
+							</span>
 						</div>
 					</div>
 
@@ -190,42 +177,31 @@ export function QRCodeOptionsComponent({
 					<div className="space-y-2">
 						<Label className="text-muted-foreground text-xs">Background</Label>
 						<div className="flex items-center gap-2">
-							<div
-								className="h-8 w-8 rounded border"
-								style={{ backgroundColor: options.bgColor }}
-							/>
-							<Input
-								value={options.bgColor}
-								onChange={(e) => handleColorChange("bgColor", e.target.value)}
-								placeholder="#FFFFFF"
+							<ColorPicker
+								value={
+									options.bgColor === "transparent"
+										? "#FFFFFF"
+										: options.bgColor
+								}
+								onChange={(color) => onUpdateOption("bgColor", color)}
 								disabled={disabled}
-								className="font-mono text-sm"
+								customPresets={BACKGROUND_PRESET_COLORS}
+								hexInputPlaceholder="#FFFFFF"
 							/>
-						</div>
-						<div className="flex flex-wrap gap-1">
-							<button
-								type="button"
-								onClick={() => onUpdateOption("bgColor", "#FFFFFF")}
-								disabled={disabled}
-								className="h-6 w-6 rounded border transition-transform hover:scale-110"
-								style={{ backgroundColor: "#FFFFFF" }}
-								title="White"
-							/>
-							<button
-								type="button"
-								onClick={() => onUpdateOption("bgColor", "#F3F4F6")}
-								disabled={disabled}
-								className="h-6 w-6 rounded border transition-transform hover:scale-110"
-								style={{ backgroundColor: "#F3F4F6" }}
-								title="Light Gray"
-							/>
-							<button
-								type="button"
-								onClick={() => onUpdateOption("bgColor", "transparent")}
-								disabled={disabled}
-								className="h-6 w-6 rounded border bg-gradient-to-br from-red-500 via-transparent to-blue-500 transition-transform hover:scale-110"
-								title="Transparent"
-							/>
+							<span className="font-mono text-muted-foreground text-sm">
+								{options.bgColor}
+							</span>
+							{options.bgColor !== "transparent" && (
+								<Button
+									variant="outline"
+									size="sm"
+									onClick={() => onUpdateOption("bgColor", "transparent")}
+									disabled={disabled}
+									className="h-8 px-2 text-xs"
+								>
+									Transparent
+								</Button>
+							)}
 						</div>
 					</div>
 				</div>
