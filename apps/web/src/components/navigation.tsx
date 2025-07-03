@@ -1,6 +1,14 @@
 "use client";
 
-import { FileJsonIcon, FileText, Hash, ImageIcon, QrCode, Shield } from "lucide-react";
+import {
+	FileJsonIcon,
+	FileText,
+	Hash,
+	ImageIcon,
+	Maximize2,
+	QrCode,
+	Shield,
+} from "lucide-react";
 import Link from "next/link";
 import {
 	type ComponentPropsWithoutRef,
@@ -54,26 +62,25 @@ const toolCategories: ToolCategory[] = [
 			},
 			{
 				title: "Hash Generator",
-			href: "/hash-generator",
-			description:
-				"Generate secure hashes using MD5, SHA-1, SHA-256, and SHA-512 algorithms.",
-			icon: <Shield className="h-4 w-4" />,
-		},
-		{
-			title: "QR Code Generator",
-			href: "/qr-code-generator",
-			description:
-				"Generate customizable QR codes for text, URLs, and any data with different options.",
-			icon: <QrCode className="h-4 w-4" />,
-		},
+				href: "/hash-generator",
+				description:
+					"Generate secure hashes using MD5, SHA-1, SHA-256, and SHA-512 algorithms.",
+				icon: <Shield className="h-4 w-4" />,
+			},
+			{
+				title: "QR Code Generator",
+				href: "/qr-code-generator",
+				description:
+					"Generate customizable QR codes for text, URLs, and any data with different options.",
+				icon: <QrCode className="h-4 w-4" />,
+			},
 		],
 	},
 	{
 		label: "Image Tools",
 		icon: <ImageIcon className="h-4 w-4" />,
-		// For a single item, md:grid-cols-1 or no specific grid is fine.
-		// Keeping it explicit here for consistency if needed later.
-		ulClassName: "md:grid-cols-1",
+		// Updated to 2 columns for better layout with multiple tools
+		ulClassName: "md:grid-cols-2",
 		tools: [
 			{
 				title: "Image Converter",
@@ -81,6 +88,13 @@ const toolCategories: ToolCategory[] = [
 				description:
 					"Convert images between different formats with customizable quality and resize options.",
 				icon: <ImageIcon className="h-4 w-4" />,
+			},
+			{
+				title: "Image Resizer",
+				href: "/image-resizer",
+				description:
+					"Resize your images to specific dimensions while maintaining quality and aspect ratio.",
+				icon: <Maximize2 className="h-4 w-4" />,
 			},
 		],
 	},
