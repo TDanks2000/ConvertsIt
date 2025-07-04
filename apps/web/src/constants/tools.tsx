@@ -10,6 +10,7 @@ import {
 	QrCode,
 	Settings,
 	Shield,
+	Target,
 	Type,
 	Zap,
 } from "lucide-react";
@@ -20,10 +21,11 @@ export interface Tool {
 	href: string;
 	description: string;
 	icon: ReactNode;
+	isNew?: boolean;
 	isPopular?: boolean;
 	isFeatured?: boolean;
 	usageCount?: string;
-	priority?: number; // Lower numbers = higher priority for sorting
+	priority?: number;
 }
 
 export interface ToolCategory {
@@ -95,6 +97,15 @@ export const toolCategories: ToolCategory[] = [
 					"Transform YAML data between multiple formats with validation.",
 				icon: <Settings className="h-4 w-4" />,
 				priority: 6,
+			},
+			{
+				title: "Regex Tester",
+				href: "/regex-tester",
+				description:
+					"Test and debug regular expressions with real-time matching and capture groups.",
+				icon: <Target className="h-4 w-4" />,
+				priority: 3,
+				isNew: true,
 			},
 		],
 	},
