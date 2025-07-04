@@ -84,14 +84,22 @@ export const toolCategories: ToolCategory[] = [
 					priority: 1,
 				},
 				{
-					title: "Code Formatter",
-					href: "/code-formatter",
-					description:
-						"Format, minify, and validate code in 15+ programming languages with real-time syntax highlighting.",
-					icon: <Braces className="h-4 w-4" />,
-					isNew: true,
-					priority: 2,
-				},
+				title: "Code Formatter",
+				href: "/code-formatter",
+				description:
+					"Format, minify, and validate code in 15+ programming languages with real-time syntax highlighting.",
+				icon: <Braces className="h-4 w-4" />,
+				isNew: true,
+				priority: 2,
+			},
+			{
+				title: "Base64 Converter",
+				href: "/base64-converter",
+				description:
+					"Encode text and files to Base64 or decode Base64 back to original content with file upload support.",
+				icon: <Code2 className="h-4 w-4" />,
+				priority: 10,
+			},
 				{
 					title: "JSON Converter",
 					href: "/json-converter",
