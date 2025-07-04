@@ -5,28 +5,13 @@ export function createRegexFromPattern(
 	flags: RegexFlags,
 ): RegExp | null {
 	try {
-		const flagString = Object.entries(flags)
-			.filter(([, enabled]) => enabled)
-			.map(([flag]) => {
-				switch (flag) {
-					case "global":
-						return "g";
-					case "ignoreCase":
-						return "i";
-					case "multiline":
-						return "m";
-					case "dotAll":
-						return "s";
-					case "unicode":
-						return "u";
-					case "sticky":
-						return "y";
-					default:
-						return "";
-				}
-			})
-			.join("");
-
+		const flagString =
+			(flags.global ? "g" : "") +
+			(flags.ignoreCase ? "i" : "") +
+			(flags.multiline ? "m" : "") +
+			(flags.dotAll ? "s" : "") +
+			(flags.unicode ? "u" : "") +
+			(flags.sticky ? "y" : "");
 		return new RegExp(pattern, flagString);
 	} catch {
 		return null;
@@ -45,49 +30,36 @@ export function testRegex(
 		const regex = createRegexFromPattern(pattern, flags);
 
 		if (!regex) {
-			return {
-				isValid: false,
-				matches: [],
-				totalMatches: 0,
-				error: "Invalid regular expression",
-				executionTime: performance.now() - startTime,
-			};
+			throw new Error("Invalid regular expression");
 		}
 
 		const matches: RegexMatch[] = [];
-		let match: RegExpExecArray | null;
 		let matchCount = 0;
+		let currentMatch: RegExpExecArray | null = null;
 
-		if (flags.global) {
-			match = regex.exec(testString);
-			while (match !== null && matchCount < maxMatches) {
-				matches.push({
-					id: `match-${matchCount}`,
-					match: match[0],
-					index: match.index,
-					length: match[0].length,
-					groups: match.slice(1),
-				});
-				matchCount++;
+		regex.lastIndex = 0;
 
-				// Prevent infinite loops
-				if (match[0].length === 0) {
-					regex.lastIndex++;
-				}
-				match = regex.exec(testString);
+		currentMatch = regex.exec(testString);
+
+		while (currentMatch !== null && matchCount < maxMatches) {
+			matches.push({
+				id: `match-${matchCount}`,
+				match: currentMatch[0],
+				index: currentMatch.index,
+				length: currentMatch[0].length,
+				groups: currentMatch.slice(1),
+			});
+			matchCount++;
+
+			if (!flags.global) {
+				break;
 			}
-		} else {
-			match = regex.exec(testString);
-			if (match) {
-				matches.push({
-					id: "match-0",
-					match: match[0],
-					index: match.index,
-					length: match[0].length,
-					groups: match.slice(1),
-				});
-				matchCount = 1;
+
+			if (currentMatch[0].length === 0) {
+				regex.lastIndex++;
 			}
+
+			currentMatch = regex.exec(testString);
 		}
 
 		return {
@@ -97,11 +69,13 @@ export function testRegex(
 			executionTime: performance.now() - startTime,
 		};
 	} catch (error) {
+		const errorMessage =
+			error instanceof Error ? error.message : "Unknown error";
 		return {
 			isValid: false,
 			matches: [],
 			totalMatches: 0,
-			error: error instanceof Error ? error.message : "Unknown error",
+			error: errorMessage,
 			executionTime: performance.now() - startTime,
 		};
 	}
