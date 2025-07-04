@@ -1,4 +1,5 @@
 import {
+	Braces,
 	Code2,
 	Database,
 	FileJsonIcon,
@@ -71,43 +72,52 @@ export const toolCategories: ToolCategory[] = [
 		description:
 			"Utilities for formatting, converting, and validating structured data and code snippets.",
 		tools: [
-			{
-				title: "JSON Formatter",
-				href: "/json-formatter",
-				description:
-					"Validate, format, and beautify JSON data with advanced formatting options.",
-				icon: <Code2 className="h-4 w-4" />,
-				isFeatured: true,
-				isPopular: true,
-				usageCount: "2.1k",
-				priority: 1,
-			},
-			{
-				title: "JSON Converter",
-				href: "/json-converter",
-				description:
-					"Convert JSON to CSV, XML, YAML and other formats seamlessly.",
-				icon: <FileJsonIcon className="h-4 w-4" />,
-				priority: 5,
-			},
-			{
-				title: "YAML Converter",
-				href: "/yaml-converter",
-				description:
-					"Transform YAML data between multiple formats with validation.",
-				icon: <Settings className="h-4 w-4" />,
-				priority: 6,
-			},
-			{
-				title: "Regex Tester",
-				href: "/regex-tester",
-				description:
-					"Test and debug regular expressions with real-time matching and capture groups.",
-				icon: <Target className="h-4 w-4" />,
-				priority: 3,
-				isNew: true,
-			},
-		],
+				{
+					title: "JSON Formatter",
+					href: "/json-formatter",
+					description:
+						"Validate, format, and beautify JSON data with advanced formatting options.",
+					icon: <Code2 className="h-4 w-4" />,
+					isFeatured: true,
+					isPopular: true,
+					usageCount: "2.1k",
+					priority: 1,
+				},
+				{
+					title: "Code Formatter",
+					href: "/code-formatter",
+					description:
+						"Format, minify, and validate code in 15+ programming languages with real-time syntax highlighting.",
+					icon: <Braces className="h-4 w-4" />,
+					isNew: true,
+					priority: 2,
+				},
+				{
+					title: "JSON Converter",
+					href: "/json-converter",
+					description:
+						"Convert JSON to CSV, XML, YAML and other formats seamlessly.",
+					icon: <FileJsonIcon className="h-4 w-4" />,
+					priority: 5,
+				},
+				{
+					title: "YAML Converter",
+					href: "/yaml-converter",
+					description:
+						"Transform YAML data between multiple formats with validation.",
+					icon: <Settings className="h-4 w-4" />,
+					priority: 6,
+				},
+				{
+					title: "Regex Tester",
+					href: "/regex-tester",
+					description:
+						"Test and debug regular expressions with real-time matching and capture groups.",
+					icon: <Target className="h-4 w-4" />,
+					priority: 3,
+					isNew: true,
+				},
+			],
 	},
 	{
 		label: "Image & Media",
