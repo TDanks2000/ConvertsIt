@@ -30,7 +30,6 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
 import type {
 	FormatMode,
 	FormattingOptions,
@@ -137,8 +136,6 @@ export const Toolbar = memo(function Toolbar({
 						</Button>
 					</div>
 
-					<Separator />
-
 					{/* Format Mode Row */}
 					<div className="flex flex-wrap items-center gap-3">
 						<div className="flex items-center gap-2">
@@ -147,54 +144,52 @@ export const Toolbar = memo(function Toolbar({
 						</div>
 						<div className="flex gap-2">
 							<Button
-						variant={formatMode === "format" ? "default" : "outline"}
-						size="sm"
-						onClick={() => {
-							onFormatModeChange("format");
-							onFormat();
-						}}
-						disabled={
-							!config.supportsFormatting || !hasInput || !validation.isValid
-						}
-						className="text-xs"
-					>
-						<FileText className="mr-1 h-3 w-3" />
-						Format
-					</Button>
-					<Button
-						variant={formatMode === "minify" ? "default" : "outline"}
-						size="sm"
-						onClick={() => {
-							onFormatModeChange("minify");
-							onMinify();
-						}}
-						disabled={
-							!config.supportsMinification ||
-							!hasInput ||
-							!validation.isValid
-						}
-						className="text-xs"
-					>
-						<MinusSquare className="mr-1 h-3 w-3" />
-						Minify
-					</Button>
-					<Button
-						variant={formatMode === "original" ? "default" : "outline"}
-						size="sm"
-						onClick={() => {
-							onFormatModeChange("original");
-							onReset();
-						}}
-						disabled={!hasOutput}
-						className="text-xs"
-					>
-						<RotateCcw className="mr-1 h-3 w-3" />
-						Reset
-					</Button>
+								variant={formatMode === "format" ? "default" : "outline"}
+								size="sm"
+								onClick={() => {
+									onFormatModeChange("format");
+									onFormat();
+								}}
+								disabled={
+									!config.supportsFormatting || !hasInput || !validation.isValid
+								}
+								className="text-xs"
+							>
+								<FileText className="mr-1 h-3 w-3" />
+								Format
+							</Button>
+							<Button
+								variant={formatMode === "minify" ? "default" : "outline"}
+								size="sm"
+								onClick={() => {
+									onFormatModeChange("minify");
+									onMinify();
+								}}
+								disabled={
+									!config.supportsMinification ||
+									!hasInput ||
+									!validation.isValid
+								}
+								className="text-xs"
+							>
+								<MinusSquare className="mr-1 h-3 w-3" />
+								Minify
+							</Button>
+							<Button
+								variant={formatMode === "original" ? "default" : "outline"}
+								size="sm"
+								onClick={() => {
+									onFormatModeChange("original");
+									onReset();
+								}}
+								disabled={!hasOutput}
+								className="text-xs"
+							>
+								<RotateCcw className="mr-1 h-3 w-3" />
+								Reset
+							</Button>
 						</div>
 					</div>
-
-					<Separator />
 
 					{/* View Mode and Actions Row */}
 					<div className="flex flex-wrap items-center justify-between gap-3">
@@ -258,7 +253,7 @@ export const Toolbar = memo(function Toolbar({
 													onFormattingOptionsChange({ indentType: value })
 												}
 											>
-												<SelectTrigger className="h-8 w-20">
+												<SelectTrigger className="h-8 w-28">
 													<SelectValue />
 												</SelectTrigger>
 												<SelectContent>

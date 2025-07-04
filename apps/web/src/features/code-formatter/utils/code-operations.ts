@@ -2,11 +2,9 @@ import type {
 	CodeStats,
 	CodeValidationResult,
 	FormattingOptions,
-	LanguageConfig,
 	SupportedLanguage,
 } from "../types";
 
-// Language configurations
 export const languageConfigs: Record<SupportedLanguage, LanguageConfig> = {
 	javascript: {
 		name: "javascript",
@@ -152,9 +150,8 @@ export const languageConfigs: Record<SupportedLanguage, LanguageConfig> = {
 		supportsFormatting: true,
 		supportsMinification: false,
 	},
-};
+} as const;
 
-// Default formatting options
 export const defaultFormattingOptions: FormattingOptions = {
 	indentSize: 2,
 	indentType: "spaces",
@@ -166,7 +163,15 @@ export const defaultFormattingOptions: FormattingOptions = {
 	trailingCommas: true,
 };
 
-// Validation function
+type LanguageConfig = {
+	name: SupportedLanguage;
+	label: string;
+	extensions: string[];
+	commentSyntax: { single?: string; multiStart?: string; multiEnd?: string };
+	supportsFormatting: boolean;
+	supportsMinification: boolean;
+};
+
 export function validateCode(
 	code: string,
 	language: SupportedLanguage,
@@ -176,7 +181,6 @@ export function validateCode(
 	}
 
 	try {
-		// Basic validation for specific languages
 		switch (language) {
 			case "json": {
 				JSON.parse(code);
@@ -184,27 +188,57 @@ export function validateCode(
 			}
 			case "javascript":
 			case "typescript": {
-				// Basic syntax check for JS/TS
 				const brackets = { "(": ")", "[": "]", "{": "}" };
 				const stack: string[] = [];
-				const lines = code.split("\n");
+				let inString: string | null = null;
+				let inMultiLineComment = false;
 
-				for (let i = 0; i < lines.length; i++) {
-					const line = lines[i];
-					for (let j = 0; j < line.length; j++) {
-						const char = line[j];
-						if (char in brackets) {
-							stack.push(brackets[char as keyof typeof brackets]);
-						} else if (Object.values(brackets).includes(char)) {
-							const expected = stack.pop();
-							if (char !== expected) {
-								return {
-									isValid: false,
-									error: `Mismatched bracket: expected '${expected}', found '${char}'`,
-									lineNumber: i + 1,
-									columnNumber: j + 1,
-								};
-							}
+				for (let i = 0; i < code.length; i++) {
+					const char = code[i];
+					const nextChar = code[i + 1];
+					const prevChar = code[i - 1];
+
+					if (inMultiLineComment) {
+						if (char === "*" && nextChar === "/") {
+							inMultiLineComment = false;
+							i++;
+						}
+						continue;
+					}
+
+					if (inString) {
+						if (char === inString && prevChar !== "\\") {
+							inString = null;
+						}
+						continue;
+					}
+
+					if (char === "/" && nextChar === "*") {
+						inMultiLineComment = true;
+						i++;
+						continue;
+					}
+
+					if (char === "/" && nextChar === "/") {
+						const lineEnd = code.indexOf("\n", i);
+						i = lineEnd === -1 ? code.length : lineEnd;
+						continue;
+					}
+
+					if (char === "'" || char === '"' || char === "`") {
+						inString = char;
+						continue;
+					}
+
+					if (char in brackets) {
+						stack.push(brackets[char as keyof typeof brackets]);
+					} else if (Object.values(brackets).includes(char)) {
+						const expected = stack.pop();
+						if (char !== expected) {
+							return {
+								isValid: false,
+								error: `Mismatched bracket: expected '${expected || ""}', found '${char}'`,
+							};
 						}
 					}
 				}
@@ -217,28 +251,17 @@ export function validateCode(
 				}
 				break;
 			}
-			default:
-				// For other languages, just check for basic structure
-				break;
 		}
 
 		return { isValid: true };
 	} catch (error) {
 		if (error instanceof SyntaxError) {
-			return {
-				isValid: false,
-				error: error.message,
-			};
+			return { isValid: false, error: error.message };
 		}
-
-		return {
-			isValid: false,
-			error: "Invalid code format",
-		};
+		return { isValid: false, error: "Invalid code format" };
 	}
 }
 
-// Basic formatting function
 export function formatCode(
 	code: string,
 	language: SupportedLanguage,
@@ -267,11 +290,7 @@ export function formatCode(
 	}
 }
 
-// Minification function
-export function minifyCode(
-	code: string,
-	language: SupportedLanguage,
-): string {
+export function minifyCode(code: string, language: SupportedLanguage): string {
 	if (!code.trim()) return code;
 
 	const config = languageConfigs[language];
@@ -298,7 +317,6 @@ export function minifyCode(
 	}
 }
 
-// Calculate code statistics
 export function calculateCodeStats(
 	code: string,
 	language: SupportedLanguage,
@@ -330,11 +348,14 @@ export function calculateCodeStats(
 		comments: 0,
 	};
 
-	// Count functions, classes, and comments based on language
 	switch (language) {
 		case "javascript":
 		case "typescript": {
-			stats.functions = (code.match(/function\s+\w+|\w+\s*=>|\w+\s*:\s*function/g) || []).length;
+			stats.functions = (
+				code.match(
+					/(function\s+\w+|(?:\w+\s*=\s*)?\([^)]*\)\s*=>|\w+\s*:\s*function|class\s+\w+\s*\{\s*\w+\s*\([^)]*\)\s*\{)/g,
+				) || []
+			).length;
 			stats.classes = (code.match(/class\s+\w+/g) || []).length;
 			stats.comments = (code.match(/\/\/.*|\/\*[\s\S]*?\*\//g) || []).length;
 			break;
@@ -347,19 +368,43 @@ export function calculateCodeStats(
 		}
 		case "java":
 		case "csharp": {
-			stats.functions = (code.match(/\b(public|private|protected|static)?\s*\w+\s+\w+\s*\(/g) || []).length;
+			stats.functions = (
+				code.match(
+					/\b(public|private|protected|static|abstract|final)?\s*\w+<(?:[^<>]*|\w+<[^<>]*>)*>\s+\w+\s*\([^)]*\)\s*(\{)?|\b(public|private|protected|static|abstract|final)?\s*\w+\s+\w+\s*\([^)]*\)\s*(\{)?/g,
+				) || []
+			).length;
 			stats.classes = (code.match(/class\s+\w+/g) || []).length;
 			stats.comments = (code.match(/\/\/.*|\/\*[\s\S]*?\*\//g) || []).length;
 			break;
 		}
 		default: {
-			// Generic comment counting
 			if (config.commentSyntax.single) {
-				const singleComments = code.match(new RegExp(`${config.commentSyntax.single.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}.*`, 'g')) || [];
+				const singleComments =
+					code.match(
+						new RegExp(
+							`${config.commentSyntax.single.replace(
+								/[.*+?^${}()|[\]\\]/g,
+								"\\$&",
+							)}.*`,
+							"g",
+						),
+					) || [];
 				stats.comments += singleComments.length;
 			}
 			if (config.commentSyntax.multiStart && config.commentSyntax.multiEnd) {
-				const multiComments = code.match(new RegExp(`${config.commentSyntax.multiStart.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}[\\s\\S]*?${config.commentSyntax.multiEnd.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'g')) || [];
+				const multiComments =
+					code.match(
+						new RegExp(
+							`${config.commentSyntax.multiStart.replace(
+								/[.*+?^${}()|[\]\\]/g,
+								"\\$&",
+							)}[\\s\\S]*?${config.commentSyntax.multiEnd.replace(
+								/[.*+?^${}()|[\]\\]/g,
+								"\\$&",
+							)}`,
+							"g",
+						),
+					) || [];
 				stats.comments += multiComments.length;
 			}
 			break;
@@ -369,53 +414,70 @@ export function calculateCodeStats(
 	return stats;
 }
 
-// Helper formatting functions
 function formatJson(code: string, options: FormattingOptions): string {
 	const parsed = JSON.parse(code);
-	const indent = options.indentType === "tabs" ? "\t" : " ".repeat(options.indentSize);
+	const indent =
+		options.indentType === "tabs" ? "\t" : " ".repeat(options.indentSize);
 	return JSON.stringify(parsed, null, indent);
 }
 
 function formatMarkup(code: string, options: FormattingOptions): string {
-	// Basic HTML/XML formatting
-	const indent = options.indentType === "tabs" ? "\t" : " ".repeat(options.indentSize);
+	const indent =
+		options.indentType === "tabs" ? "\t" : " ".repeat(options.indentSize);
 	let formatted = code;
 	let indentLevel = 0;
 
-	// Remove extra whitespace
-	formatted = formatted.replace(/\s+/g, " ").trim();
+	formatted = formatted.replace(/(>)\s*(<)(?![\s\S]*<\/\2)/g, "$1\n$2");
+	formatted = formatted.replace(/(\s*)(<[^/])/g, "\n$2");
+	formatted = formatted.replace(
+		/(<(?:\/?)(?:!DOCTYPE|html|head|body|meta|link|script|style|title)[^>]*>)/gi,
+		"\n$1\n",
+	);
+	formatted = formatted.replace(/(<\/[^>]+>)(<[^/!]+>)/g, "$1\n$2");
+	formatted = formatted.replace(/(<!doctype html>)/i, "$1\n");
 
-	// Add line breaks and indentation
-	formatted = formatted.replace(/></g, ">\n<");
-	const lines = formatted.split("\n");
+	const lines = formatted.split("\n").filter(Boolean);
 	const result: string[] = [];
 
 	for (const line of lines) {
 		const trimmed = line.trim();
-		if (trimmed.startsWith("</")) {
+
+		if (!trimmed) continue;
+
+		if (
+			trimmed.startsWith("</") ||
+			trimmed.startsWith("<!-- /") ||
+			trimmed.startsWith("<!DOCTYPE")
+		) {
 			indentLevel = Math.max(0, indentLevel - 1);
 		}
+
 		result.push(indent.repeat(indentLevel) + trimmed);
-		if (trimmed.startsWith("<") && !trimmed.startsWith("</") && !trimmed.endsWith("/>")) {
+
+		if (
+			trimmed.startsWith("<") &&
+			!trimmed.startsWith("</") &&
+			!trimmed.endsWith("/>") &&
+			!trimmed.startsWith("<!--") &&
+			!trimmed.startsWith("<!DOCTYPE")
+		) {
 			indentLevel++;
 		}
 	}
-
-	return result.join("\n");
+	return result.join("\n").trim();
 }
 
 function formatCss(code: string, options: FormattingOptions): string {
-	// Basic CSS formatting
-	const indent = options.indentType === "tabs" ? "\t" : " ".repeat(options.indentSize);
+	const indent =
+		options.indentType === "tabs" ? "\t" : " ".repeat(options.indentSize);
 	let formatted = code;
 
-	// Remove extra whitespace
-	formatted = formatted.replace(/\s+/g, " ").trim();
-
-	// Add line breaks
-	formatted = formatted.replace(/\{/g, " {\n");
-	formatted = formatted.replace(/\}/g, "\n}\n");
-	formatted = formatted.replace(/;/g, ";\n");
+	formatted = formatted.replace(/\/\*[\s\S]*?\*\//g, "");
+	formatted = formatted.replace(/([{};])\s*/g, "$1\n");
+	formatted = formatted.replace(/\s*([,:;{}])\s*/g, "$1");
+	formatted = formatted.replace(/([^\s])(\{)/g, "$1 $2");
+	formatted = formatted.replace(/(\})(\s*[^\s])/g, "$1\n$2");
+	formatted = formatted.replace(/\n\n+/g, "\n");
 
 	const lines = formatted.split("\n");
 	const result: string[] = [];
@@ -423,50 +485,56 @@ function formatCss(code: string, options: FormattingOptions): string {
 
 	for (const line of lines) {
 		const trimmed = line.trim();
-		if (trimmed === "}") {
+		if (!trimmed) continue;
+
+		if (trimmed.includes("}")) {
 			indentLevel = Math.max(0, indentLevel - 1);
 		}
-		if (trimmed) {
-			result.push(indent.repeat(indentLevel) + trimmed);
-		}
-		if (trimmed.endsWith("{")) {
+
+		result.push(indent.repeat(indentLevel) + trimmed);
+
+		if (trimmed.includes("{")) {
 			indentLevel++;
 		}
 	}
 
-	return result.join("\n");
+	return result.join("\n").trim();
 }
 
 function formatGeneric(code: string, options: FormattingOptions): string {
-	// Generic formatting - mainly indentation and line cleanup
-	const indent = options.indentType === "tabs" ? "\t" : " ".repeat(options.indentSize);
+	const indent =
+		options.indentType === "tabs" ? "\t" : " ".repeat(options.indentSize);
 	const lines = code.split("\n");
 	const result: string[] = [];
 	let indentLevel = 0;
 
 	for (const line of lines) {
-		let trimmed = line.trim();
-		
+		let trimmed = line;
+
 		if (options.trimTrailingWhitespace) {
 			trimmed = trimmed.replace(/\s+$/, "");
 		}
 
-		// Adjust indentation based on brackets
-		if (trimmed.includes("}") || trimmed.includes("])") || trimmed.includes(")}")) {
-			indentLevel = Math.max(0, indentLevel - 1);
+		const openBrackets = (trimmed.match(/[{[(]/g) || []).length;
+		const closeBrackets = (trimmed.match(/[}\])]/g) || []).length;
+
+		if (closeBrackets > openBrackets) {
+			indentLevel = Math.max(0, indentLevel - (closeBrackets - openBrackets));
 		}
 
-		if (trimmed) {
-			result.push(indent.repeat(indentLevel) + trimmed);
+		if (trimmed.trim()) {
+			result.push(indent.repeat(indentLevel) + trimmed.trim());
+		} else {
+			result.push("");
 		}
 
-		if (trimmed.includes("{") || trimmed.includes("[") || trimmed.includes("(")) {
-			indentLevel++;
+		if (openBrackets > closeBrackets) {
+			indentLevel += openBrackets - closeBrackets;
 		}
 	}
 
 	let formatted = result.join("\n");
-	
+
 	if (options.insertFinalNewline && !formatted.endsWith("\n")) {
 		formatted += "\n";
 	}
@@ -474,90 +542,149 @@ function formatGeneric(code: string, options: FormattingOptions): string {
 	return formatted;
 }
 
-// Minification helpers
 function minifyMarkup(code: string): string {
 	return code
+		.replace(/<!--[\s\S]*?-->/g, "")
 		.replace(/\s+/g, " ")
 		.replace(/> </g, "><")
-		.replace(/<!--[\s\S]*?-->/g, "")
 		.trim();
 }
 
 function minifyCss(code: string): string {
 	return code
 		.replace(/\/\*[\s\S]*?\*\//g, "")
-		.replace(/\s+/g, " ")
-		.replace(/; /g, ";")
-		.replace(/ \{/g, "{")
-		.replace(/\{ /g, "{")
-		.replace(/ \}/g, "}")
+		.replace(/\s*([;:{},])\s*/g, "$1")
+		.replace(/;\}/g, "}")
 		.trim();
 }
 
 function minifyJs(code: string): string {
-	// Basic JS minification - remove comments and extra whitespace
 	return code
 		.replace(/\/\/.*$/gm, "")
 		.replace(/\/\*[\s\S]*?\*\//g, "")
 		.replace(/\s+/g, " ")
-		.replace(/; /g, ";")
-		.replace(/ \{/g, "{")
-		.replace(/\{ /g, "{")
-		.replace(/ \}/g, "}")
+		.replace(/;\s*}/g, "}")
+		.replace(/;\s*\]/g, "]")
+		.replace(/;\s*\)/g, ")")
+		.replace(/\s*([;:{},=!&|])\s*/g, "$1")
 		.trim();
 }
 
-// Auto-detect language from code content
 export function detectLanguage(code: string): SupportedLanguage {
 	if (!code.trim()) return "javascript";
 
-	// JSON detection
 	try {
 		JSON.parse(code);
 		return "json";
-	} catch {
-		// Not JSON, continue
-	}
+	} catch {}
 
-	// HTML detection
-	if (/<\/?[a-z][\s\S]*>/i.test(code)) {
+	if (
+		/<(?:\w+|\/)?(?:[^>]*?)>/i.test(code) &&
+		(/<html|<!DOCTYPE/i.test(code) || /<\w+\s*\/>/i.test(code))
+	) {
 		return "html";
 	}
 
-	// CSS detection
-	if (/[a-z-]+\s*:\s*[^;]+;/i.test(code) && /{[^}]*}/i.test(code)) {
+	if (
+		/\b\w+\s*\{[^}]*\}\s*/.test(code) &&
+		/[:;]/.test(code) &&
+		!/<\/?\w+>/.test(code)
+	) {
 		return "css";
 	}
 
-	// Python detection
-	if (/def\s+\w+\s*\(|import\s+\w+|from\s+\w+\s+import/.test(code)) {
+	if (
+		/^(?:import\s+\w+|from\s+\w+\s+import|def\s+\w+|class\s+\w+\s*:\s*)/m.test(
+			code,
+		)
+	) {
 		return "python";
 	}
 
-	// Java detection
-	if (/public\s+class\s+\w+|public\s+static\s+void\s+main/.test(code)) {
+	if (
+		/\b(public|private|protected)\s+(static\s+)?(class|interface|enum)\s+\w+|\b(public|private|protected)\s+\w+\s+\w+\s*\([^)]*\)\s*\{/.test(
+			code,
+		)
+	) {
 		return "java";
 	}
 
-	// C++ detection
-	if (/#include\s*<[^>]+>|using\s+namespace\s+std/.test(code)) {
+	if (
+		/#include\s*<[^>]+>|using\s+namespace\s+\w+;|\b(int|void|char|double|float|long|short)\s+\w+\s*\([^)]*\)\s*\{/.test(
+			code,
+		)
+	) {
 		return "cpp";
 	}
 
-	// TypeScript detection
-	if (/interface\s+\w+|type\s+\w+\s*=|:\s*\w+\s*[=;]/.test(code)) {
+	if (
+		/\b(?:interface|type|enum)\s+\w+|:\s*\w+\s*(?:=|;)|(?:const|let|var)\s+\w+:\s*\w+/.test(
+			code,
+		)
+	) {
 		return "typescript";
 	}
 
-	// Default to JavaScript
+	if (
+		/^\s*<\?php|\b(?:function|class)\s+\w+|\$this->|\b(?:echo|print)\b/.test(
+			code,
+		)
+	) {
+		return "php";
+	}
+
+	if (
+		/^(?:def|class)\s+\w+|\b(?:puts|print)\b|\b(?:require|include)\b/.test(code)
+	) {
+		return "ruby";
+	}
+
+	if (
+		/^package\s+\w+|\bfunc\s+\w+\s*\(.*\)\s*\(.*\)\s*\{|\bimport\s+"[^"]+"/.test(
+			code,
+		)
+	) {
+		return "go";
+	}
+
+	if (
+		/^(?:struct|enum)\s+\w+|\bfn\s+\w+\s*\([^)]*\)\s*(?:->\s*\w+)?\s*\{|\buse\s+\w+::/.test(
+			code,
+		)
+	) {
+		return "rust";
+	}
+
+	if (/<(\?xml|!--)/.test(code)) {
+		return "xml";
+	}
+
+	if (/^---|\b\w+:\s+(?:[a-zA-Z0-9.\-_]+|\[[^\]]*\]|\{[^}]*\})/.test(code)) {
+		return "yaml";
+	}
+
+	if (
+		/(CREATE|SELECT|INSERT|UPDATE|DELETE)\s+(TABLE|FROM|INTO|SET)\s+\w+/i.test(
+			code,
+		)
+	) {
+		return "sql";
+	}
+
+	if (
+		/^#+\s+\w+|^\*{1,2}\w+\*{1,2}|^\s*-\s+\w+|^\s*\d+\.\s+\w+|^\[.*\]\(.*\)/m.test(
+			code,
+		)
+	) {
+		return "markdown";
+	}
+
 	return "javascript";
 }
 
-// Get sample code for a language
 export function getSampleCode(language: SupportedLanguage): string {
 	const samples: Record<SupportedLanguage, string> = {
-		javascript: `// JavaScript Example
-function greet(name) {
+		javascript: `function greet(name) {
   console.log(\`Hello, \${name}!\`);
 }
 
@@ -567,8 +694,7 @@ const user = {
 };
 
 greet(user.name);`,
-		typescript: `// TypeScript Example
-interface User {
+		typescript: `interface User {
   name: string;
   age: number;
 }
@@ -583,8 +709,7 @@ const user: User = {
 };
 
 greet(user);`,
-		python: `# Python Example
-def greet(name):
+		python: `def greet(name):
     print(f"Hello, {name}!")
 
 class User:
@@ -594,8 +719,7 @@ class User:
 
 user = User("World", 25)
 greet(user.name)`,
-		java: `// Java Example
-public class HelloWorld {
+		java: `public class HelloWorld {
     public static void main(String[] args) {
         User user = new User("World", 25);
         greet(user.getName());
@@ -605,8 +729,7 @@ public class HelloWorld {
         System.out.println("Hello, " + name + "!");
     }
 }`,
-		cpp: `// C++ Example
-#include <iostream>
+		cpp: `#include <iostream>
 #include <string>
 
 class User {
@@ -626,8 +749,7 @@ int main() {
     greet(user.name);
     return 0;
 }`,
-		csharp: `// C# Example
-using System;
+		csharp: `using System;
 
 public class User
 {
@@ -649,7 +771,6 @@ public class Program
     }
 }`,
 		php: `<?php
-// PHP Example
 class User {
     public $name;
     public $age;
@@ -667,8 +788,7 @@ function greet($name) {
 $user = new User("World", 25);
 greet($user->name);
 ?>`,
-		ruby: `# Ruby Example
-class User
+		ruby: `class User
   attr_accessor :name, :age
   
   def initialize(name, age)
@@ -683,8 +803,7 @@ end
 
 user = User.new("World", 25)
 greet(user.name)`,
-		go: `// Go Example
-package main
+		go: `package main
 
 import "fmt"
 
@@ -694,7 +813,7 @@ type User struct {
 }
 
 func greet(name string) {
-    fmt.Printf("Hello, %s!\n", name)
+    fmt.Printf("Hello, %s!\\n", name)
 }
 
 func main() {
@@ -704,8 +823,7 @@ func main() {
     }
     greet(user.Name)
 }`,
-		rust: `// Rust Example
-struct User {
+		rust: `struct User {
     name: String,
     age: u32,
 }
@@ -742,8 +860,7 @@ fn main() {
     </script>
 </body>
 </html>`,
-		css: `/* CSS Example */
-.container {
+		css: `.container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
@@ -770,8 +887,7 @@ fn main() {
 .button:hover {
   background-color: #0056b3;
 }`,
-		scss: `// SCSS Example
-$primary-color: #007bff;
+		scss: `$primary-color: #007bff;
 $secondary-color: #6c757d;
 $border-radius: 4px;
 
@@ -841,8 +957,7 @@ $border-radius: 4px;
     <isActive>true</isActive>
   </user>
 </users>`,
-		yaml: `# YAML Example
-user:
+		yaml: `user:
   name: John Doe
   age: 30
   email: john.doe@example.com
@@ -865,8 +980,7 @@ config:
   cache:
     enabled: true
     ttl: 3600`,
-		sql: `-- SQL Example
-CREATE TABLE users (
+		sql: `CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
@@ -937,7 +1051,6 @@ This is a **comprehensive** markdown document showcasing various features.
 Inline \`code\` example.
 
 \`\`\`javascript
-// Code block example
 function greet(name) {
   console.log(\`Hello, \${name}!\`);
 }

@@ -41,10 +41,10 @@ export const CodeFormatter = memo(function CodeFormatter() {
 					<div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
 						<div className="lg:col-span-3">
 							<CodeInput
-					value={input}
-					onChange={setInput}
-					language={language}
-				/>
+								value={input}
+								onChange={setInput}
+								language={language}
+							/>
 						</div>
 						<div className="lg:col-span-1">
 							<StatsCard stats={stats} language={language} />
@@ -74,16 +74,16 @@ export const CodeFormatter = memo(function CodeFormatter() {
 					<div className="space-y-6">
 						<div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
 							<CodeInput
-					value={input}
-					onChange={setInput}
-					language={language}
-				/>
-				<CodeOutput
-					value={output}
-					language={language}
-					formatMode={formatMode}
-					isValid={validation.isValid}
-				/>
+								value={input}
+								onChange={setInput}
+								language={language}
+							/>
+							<CodeOutput
+								value={output}
+								language={language}
+								formatMode={formatMode}
+								isValid={validation.isValid}
+							/>
 						</div>
 						<StatsCard stats={stats} language={language} />
 					</div>
@@ -112,9 +112,9 @@ export const CodeFormatter = memo(function CodeFormatter() {
 				onMinify={handleMinify}
 				onReset={handleReset}
 				onCopyInput={handleCopyInput}
-			onCopyOutput={handleCopyOutput}
-			onDownloadInput={handleDownloadInput}
-			onDownloadOutput={handleDownloadOutput}
+				onCopyOutput={handleCopyOutput}
+				onDownloadInput={handleDownloadInput}
+				onDownloadOutput={handleDownloadOutput}
 			/>
 			{renderContent()}
 		</div>

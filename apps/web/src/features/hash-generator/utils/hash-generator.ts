@@ -1,8 +1,6 @@
 import type { HashAlgorithm, HashResult, HashStats } from "../types";
+import { md5 } from "./md5";
 
-/**
- * Generate hash using Web Crypto API
- */
 export async function generateHash(
 	input: string,
 	algorithm: HashAlgorithm,
@@ -14,63 +12,41 @@ export async function generateHash(
 	const encoder = new TextEncoder();
 	const data = encoder.encode(input);
 
-	let cryptoAlgorithm: string;
+	let hash: string;
 	switch (algorithm) {
 		case "md5":
-			// MD5 is not supported by Web Crypto API, we'll use a fallback
-			return generateMD5Hash(input);
+			hash = md5(input);
+			break;
 		case "sha1":
-			cryptoAlgorithm = "SHA-1";
-			break;
 		case "sha256":
-			cryptoAlgorithm = "SHA-256";
+		case "sha512": {
+			const cryptoAlgorithm =
+				algorithm === "sha1"
+					? "SHA-1"
+					: algorithm === "sha256"
+						? "SHA-256"
+						: "SHA-512";
+			try {
+				const hashBuffer = await crypto.subtle.digest(cryptoAlgorithm, data);
+				const hashArray = Array.from(new Uint8Array(hashBuffer));
+				hash = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+			} catch (error) {
+				throw new Error(`Failed to generate ${algorithm} hash: ${error}`);
+			}
 			break;
-		case "sha512":
-			cryptoAlgorithm = "SHA-512";
-			break;
+		}
 		default:
 			throw new Error(`Unsupported algorithm: ${algorithm}`);
 	}
 
-	try {
-		const hashBuffer = await crypto.subtle.digest(cryptoAlgorithm, data);
-		const hashArray = Array.from(new Uint8Array(hashBuffer));
-		const hash = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
-
-		return {
-			algorithm,
-			hash,
-			input,
-			timestamp: new Date(),
-		};
-	} catch (error) {
-		throw new Error(`Failed to generate ${algorithm} hash: ${error}`);
-	}
-}
-
-/**
- * Generate MD5 hash using a simple implementation
- * Note: This is for demonstration purposes. In production, consider using a proper crypto library.
- */
-function generateMD5Hash(input: string): HashResult {
-	// Simple MD5 implementation (not cryptographically secure)
-	// For a real implementation, you'd want to use a proper crypto library
-	const hash = btoa(input)
-		.replace(/[^a-f0-9]/gi, "")
-		.substring(0, 32)
-		.padEnd(32, "0");
-
 	return {
-		algorithm: "md5",
+		algorithm,
 		hash,
 		input,
 		timestamp: new Date(),
 	};
 }
 
-/**
- * Generate multiple hashes for the same input
- */
 export async function generateMultipleHashes(
 	input: string,
 	algorithms: HashAlgorithm[],
@@ -81,9 +57,6 @@ export async function generateMultipleHashes(
 	return results;
 }
 
-/**
- * Calculate hash statistics
- */
 export function calculateHashStats(
 	input: string,
 	hashResult: HashResult,
@@ -97,14 +70,11 @@ export function calculateHashStats(
 	};
 }
 
-/**
- * Validate hash format
- */
 export function validateHashFormat(
 	hash: string,
 	algorithm: HashAlgorithm,
 ): boolean {
-	const expectedLengths = {
+	const expectedLengths: Record<HashAlgorithm, number> = {
 		md5: 32,
 		sha1: 40,
 		sha256: 64,
@@ -117,16 +87,10 @@ export function validateHashFormat(
 	return hash.length === expectedLength && hexPattern.test(hash);
 }
 
-/**
- * Compare two hashes
- */
 export function compareHashes(hash1: string, hash2: string): boolean {
 	return hash1.toLowerCase() === hash2.toLowerCase();
 }
 
-/**
- * Format hash for display (add spaces every 8 characters)
- */
 export function formatHashForDisplay(hash: string): string {
 	return hash.replace(/(.{8})/g, "$1 ").trim();
 }
