@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
 import {
 	Tooltip,
 	TooltipContent,
@@ -173,17 +174,14 @@ export function ConversionOptionsComponent({
 								{options.quality}%
 							</span>
 						</div>
-						<input
-							type="range"
-							min="10"
-							max="100"
-							step="5"
-							value={options.quality}
-							onChange={(e) =>
-								updateOptions({ quality: Number.parseInt(e.target.value) })
-							}
+						<Slider
+							min={10}
+							max={100}
+							step={5}
+							value={[options.quality]}
+							onValueChange={(value) => updateOptions({ quality: value[0] })}
 							disabled={disabled}
-							className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-gray-200 dark:bg-gray-700"
+							className="w-full cursor-pointer"
 						/>
 						<div className="flex justify-between text-muted-foreground text-xs">
 							<span>Lower size</span>
