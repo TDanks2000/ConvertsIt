@@ -7,73 +7,37 @@ import type {
 
 export function encodeToBase64(text: string): Base64ConversionResult {
 	if (!text) {
-		return {
-			isValid: true,
-			output: "",
-		};
+		return { isValid: true, output: "" };
 	}
 	try {
-		const encoder = new TextEncoder();
-		const utf8Bytes = encoder.encode(text);
-		let binaryString = "";
-		for (let i = 0; i < utf8Bytes.length; i++) {
-			binaryString += String.fromCharCode(utf8Bytes[i]);
-		}
-		const encoded = btoa(binaryString);
-		return {
-			isValid: true,
-			output: encoded,
-		};
+		const encoded = Buffer.from(text, "utf8").toString("base64");
+		return { isValid: true, output: encoded };
 	} catch (error) {
 		const errorMessage =
-			error instanceof Error ? error.message : "Unknown error";
-
-		return {
-			isValid: false,
-			error: errorMessage,
-			output: "",
-		};
+			error instanceof Error ? error.message : "Encoding failed";
+		return { isValid: false, error: errorMessage, output: "" };
 	}
 }
 
 export function decodeFromBase64(base64: string): Base64ConversionResult {
 	if (!base64) {
-		return {
-			isValid: true,
-			output: "",
-		};
+		return { isValid: true, output: "" };
 	}
 
 	const cleanBase64 = base64.replace(/\s/g, "");
 	if (!isValidBase64(cleanBase64)) {
-		return {
-			isValid: false,
-			error: "Invalid Base64 format.",
-			output: "",
-		};
+		return { isValid: false, error: "Invalid Base64 format.", output: "" };
 	}
 
 	try {
-		const binaryString = atob(cleanBase64);
-		const bytes = new Uint8Array(binaryString.length);
-		for (let i = 0; i < binaryString.length; i++) {
-			bytes[i] = binaryString.charCodeAt(i);
-		}
-		const decoder = new TextDecoder("utf-8");
-		const decoded = decoder.decode(bytes);
-		return {
-			isValid: true,
-			output: decoded,
-		};
+		const decoded = Buffer.from(cleanBase64, "base64").toString("utf8");
+		return { isValid: true, output: decoded };
 	} catch (error) {
 		const errorMessage =
-			error instanceof Error ? error.message : "Unknown error";
-
-		return {
-			isValid: false,
-			error: errorMessage,
-			output: "",
-		};
+			error instanceof Error
+				? `Decoding failed: ${error.message}`
+				: "Decoding failed due to unknown error.";
+		return { isValid: false, error: errorMessage, output: "" };
 	}
 }
 
@@ -81,15 +45,12 @@ export function isValidBase64(str: string): boolean {
 	if (!str) return true;
 
 	const base64Regex = /^[A-Za-z0-9+/]*={0,2}$/;
-
 	if (!base64Regex.test(str)) {
 		return false;
 	}
 
 	const withoutPadding = str.replace(/=/g, "");
-	const remainder = withoutPadding.length % 4;
-
-	return remainder !== 1;
+	return withoutPadding.length % 4 !== 1;
 }
 
 export function calculateBase64Stats(
@@ -119,13 +80,18 @@ export function fileToBase64(file: File): Promise<string> {
 		const reader = new FileReader();
 		reader.onload = () => {
 			if (typeof reader.result === "string") {
-				const base64 = reader.result.split(",")[1] || "";
-				resolve(base64);
+				const base64 = reader.result.split(",")[1];
+				if (base64) {
+					resolve(base64);
+				} else {
+					reject(new Error("File content not found in Data URL."));
+				}
 			} else {
-				reject(new Error("Failed to read file"));
+				reject(new Error("Failed to read file as string."));
 			}
 		};
-		reader.onerror = () => reject(new Error("Failed to read file"));
+		reader.onerror = () =>
+			reject(new Error(`Error reading file: ${reader.error?.message}`));
 		reader.readAsDataURL(file);
 	});
 }
@@ -171,17 +137,10 @@ export async function copyToClipboard(text: string): Promise<boolean> {
 			await navigator.clipboard.writeText(text);
 			return true;
 		}
-		const textArea = document.createElement("textarea");
-		textArea.value = text;
-		textArea.style.position = "fixed";
-		textArea.style.left = "-999999px";
-		textArea.style.top = "-999999px";
-		document.body.appendChild(textArea);
-		textArea.focus();
-		textArea.select();
-		const result = document.execCommand("copy");
-		document.body.removeChild(textArea);
-		return result;
+		console.warn(
+			"Clipboard API not available or context is not secure.",
+		);
+		return false;
 	} catch (error) {
 		console.error("Failed to copy to clipboard:", error);
 		return false;
@@ -201,5 +160,5 @@ It includes:
 
 Base64 encoding converts binary data into ASCII text format.`;
 	}
-	return "SGVsbG8sIFdvcmxkISDwn4yNCgpUaGlzIGlzIGEgc2FtcGxlIHRleHQgZm9yIEJhc2U2NCBlbmNvZGluZy4KSXQgaW5jbHVkZXM6Ci0gTXVsdGlwbGUgbGluZXMKLyBTcGVjaWFsIGNoYXJhY3RlcnM6IEAjJCVeJigpCi8gVW5pY29kZSBlbW9qaTog8J+agOKcqPCfjonwn46JCi8gTnVtYmVyczogMTIzNDUKCkJhc2U2NCBlbmNvZGluZyBjb252ZXJ0cyBiaW5hcnkgZGF0YSBpbnRvIEFTQ0lJIHRleHQgZm9ybWF0Lg==";
+	return "SGVsbG8sIFdvcmxkISDwn4yNCgpUaGlzIGlzIGEgc2FtcGxlIHRleHQgZm9yIEJhc2U2NCBlbmNvZGluZy4KSXQgaW5jbHVkZXM6Ci0gTXVsdGlwbGUgbGluZXMKLyBTcGVjaWFsIGNoYXJhY3RlcnM6IEAjJCVeJigpCi0gVW5pY29kZSBlbW9qaTog8J+agOKcqPCfjonwn46JCi0gTnVtYmVyczogMTIzNDUKCkJhc2U2NCBlbmNvZGluZyBjb252ZXJ0cyBiaW5hcnkgZGF0YSBpbnRvIEFTQ0lJIHRleHQgZm9ybWF0Lg==";
 }
