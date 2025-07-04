@@ -6,6 +6,7 @@ import {
 	FileText,
 	Hash,
 	ImageIcon,
+	Link,
 	Maximize2,
 	Palette,
 	QrCode,
@@ -161,6 +162,14 @@ export const toolCategories: ToolCategory[] = [
 		description:
 			"Essential utilities for security tasks, data encoding, and general helpful tools.",
 		tools: [
+			{
+				title: "URL Encoder/Decoder",
+				href: "/url-converter",
+				description:
+					"Encode and decode URLs with support for component and full URL encoding.",
+				icon: <Link className="h-4 w-4" />,
+				priority: 7,
+			},
 			{
 				title: "Hash Generator",
 				href: "/hash-generator",
