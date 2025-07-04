@@ -73,7 +73,7 @@ export default function Home() {
 				<div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/10" />
 				<div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
 
-				<div className="container relative z-50 mx-auto px-4 py-16 text-center lg:py-24">
+				<div className="container relative mx-auto px-4 py-16 text-center lg:py-24">
 					<div className="mx-auto max-w-4xl space-y-8">
 						<div className="space-y-6">
 							<div className="flex items-center justify-center gap-2">
@@ -114,7 +114,7 @@ export default function Home() {
 						</div>
 
 						{/* Search Bar */}
-						<div className="relative z-50 space-y-4">
+						<div className="relative space-y-4">
 							<SearchBar placeholder="Search tools or try 'JSON formatter', 'image converter'..." />
 							<p className="text-muted-foreground text-sm">
 								Or browse by category below

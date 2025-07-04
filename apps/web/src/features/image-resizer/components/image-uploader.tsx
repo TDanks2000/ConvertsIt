@@ -79,7 +79,7 @@ export function ImageUploader({
 			<CardContent>
 				<button
 					className={cn(
-						"cursor-pointer rounded-lg border-2 border-muted-foreground/25 border-dashed p-8 text-center transition-colors hover:border-muted-foreground/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+						"w-full cursor-pointer rounded-lg border-2 border-muted-foreground/25 border-dashed p-8 text-center transition-colors hover:border-muted-foreground/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
 						isProcessing && "pointer-events-none opacity-50",
 					)}
 					onDrop={handleDrop}
