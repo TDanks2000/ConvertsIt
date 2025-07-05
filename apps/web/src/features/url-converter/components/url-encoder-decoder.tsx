@@ -147,43 +147,43 @@ export function UrlEncoderDecoder() {
 							<div className="space-y-2">
 								<h3 className="font-medium text-sm">Component Encoding</h3>
 								<p className="text-muted-foreground text-xs">
-									Encode/decode individual URL components like query parameters
-									and form data.
+									Encode/decode individual URL components like query
+									parameters and form data.
 								</p>
 							</div>
 							<div className="space-y-2">
 								<h3 className="font-medium text-sm">Full URL Encoding</h3>
 								<p className="text-muted-foreground text-xs">
-									Encode/decode complete URLs while preserving URL structure and
-									reserved characters.
+									Encode/decode complete URLs while preserving URL
+									structure and reserved characters.
 								</p>
 							</div>
 							<div className="space-y-2">
 								<h3 className="font-medium text-sm">Real-time Processing</h3>
 								<p className="text-muted-foreground text-xs">
-									Instant encoding/decoding as you type with live validation and
-									error detection.
+									Instant encoding/decoding as you type with live
+									validation and error detection.
 								</p>
 							</div>
 							<div className="space-y-2">
 								<h3 className="font-medium text-sm">URL Analysis</h3>
 								<p className="text-muted-foreground text-xs">
-									Detailed breakdown of URL components including protocol,
-									hostname, and parameters.
+									Detailed breakdown of URL components including
+									protocol, hostname, and parameters.
 								</p>
 							</div>
 							<div className="space-y-2">
 								<h3 className="font-medium text-sm">Copy & Download</h3>
 								<p className="text-muted-foreground text-xs">
-									Easily copy results to clipboard or download as text files for
-									later use.
+									Easily copy results to clipboard or download as text
+									files for later use.
 								</p>
 							</div>
 							<div className="space-y-2">
 								<h3 className="font-medium text-sm">Sample Data</h3>
 								<p className="text-muted-foreground text-xs">
-									Quick start with pre-loaded sample URLs and text for testing
-									and learning.
+									Quick start with pre-loaded sample URLs and text for
+									testing and learning.
 								</p>
 							</div>
 						</div>

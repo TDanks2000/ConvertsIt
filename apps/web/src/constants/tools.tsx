@@ -1,9 +1,11 @@
 import {
 	Braces,
+	Clock,
 	Code2,
 	Database,
 	FileJsonIcon,
 	FileText,
+	GitCompare,
 	Hash,
 	ImageIcon,
 	Link,
@@ -46,25 +48,34 @@ export const toolCategories: ToolCategory[] = [
 		description:
 			"Tools for creating, analyzing, and transforming text and various content formats.",
 		tools: [
-			{
-				title: "Markdown to HTML",
-				href: "/markdown-to-html",
-				description:
-					"Transform markdown into clean HTML with live preview and syntax highlighting.",
-				icon: <FileText className="h-4 w-4" />,
-				isPopular: true,
-				usageCount: "1.8k",
-				priority: 2,
-			},
-			{
-				title: "Word Counter",
-				href: "/word-counter",
-				description:
-					"Analyze text statistics including words, characters, and readability metrics.",
-				icon: <Hash className="h-4 w-4" />,
-				priority: 4,
-			},
-		],
+				{
+					title: "Markdown to HTML",
+					href: "/markdown-to-html",
+					description:
+						"Transform markdown into clean HTML with live preview and syntax highlighting.",
+					icon: <FileText className="h-4 w-4" />,
+					isPopular: true,
+					usageCount: "1.8k",
+					priority: 2,
+				},
+				{
+					title: "Text Diff Checker",
+					href: "/text-diff-checker",
+					description:
+						"Compare two texts and visualize differences with multiple view modes and advanced options.",
+					icon: <GitCompare className="h-4 w-4" />,
+					isNew: true,
+					priority: 3,
+				},
+				{
+					title: "Word Counter",
+					href: "/word-counter",
+					description:
+						"Analyze text statistics including words, characters, and readability metrics.",
+					icon: <Hash className="h-4 w-4" />,
+					priority: 4,
+				},
+			],
 	},
 	{
 		label: "Data & Code",
@@ -73,18 +84,18 @@ export const toolCategories: ToolCategory[] = [
 		description:
 			"Utilities for formatting, converting, and validating structured data and code snippets.",
 		tools: [
-				{
-					title: "JSON Formatter",
-					href: "/json-formatter",
-					description:
-						"Validate, format, and beautify JSON data with advanced formatting options.",
-					icon: <Code2 className="h-4 w-4" />,
-					isFeatured: true,
-					isPopular: true,
-					usageCount: "2.1k",
-					priority: 1,
-				},
-				{
+			{
+				title: "JSON Formatter",
+				href: "/json-formatter",
+				description:
+					"Validate, format, and beautify JSON data with advanced formatting options.",
+				icon: <Code2 className="h-4 w-4" />,
+				isFeatured: true,
+				isPopular: true,
+				usageCount: "2.1k",
+				priority: 1,
+			},
+			{
 				title: "Code Formatter",
 				href: "/code-formatter",
 				description:
@@ -101,32 +112,32 @@ export const toolCategories: ToolCategory[] = [
 				icon: <Code2 className="h-4 w-4" />,
 				priority: 10,
 			},
-				{
-					title: "JSON Converter",
-					href: "/json-converter",
-					description:
-						"Convert JSON to CSV, XML, YAML and other formats seamlessly.",
-					icon: <FileJsonIcon className="h-4 w-4" />,
-					priority: 5,
-				},
-				{
-					title: "YAML Converter",
-					href: "/yaml-converter",
-					description:
-						"Transform YAML data between multiple formats with validation.",
-					icon: <Settings className="h-4 w-4" />,
-					priority: 6,
-				},
-				{
-					title: "Regex Tester",
-					href: "/regex-tester",
-					description:
-						"Test and debug regular expressions with real-time matching and capture groups.",
-					icon: <Target className="h-4 w-4" />,
-					priority: 3,
-					isNew: true,
-				},
-			],
+			{
+				title: "JSON Converter",
+				href: "/json-converter",
+				description:
+					"Convert JSON to CSV, XML, YAML and other formats seamlessly.",
+				icon: <FileJsonIcon className="h-4 w-4" />,
+				priority: 5,
+			},
+			{
+				title: "YAML Converter",
+				href: "/yaml-converter",
+				description:
+					"Transform YAML data between multiple formats with validation.",
+				icon: <Settings className="h-4 w-4" />,
+				priority: 6,
+			},
+			{
+				title: "Regex Tester",
+				href: "/regex-tester",
+				description:
+					"Test and debug regular expressions with real-time matching and capture groups.",
+				icon: <Target className="h-4 w-4" />,
+				priority: 3,
+				isNew: true,
+			},
+		],
 	},
 	{
 		label: "Image & Media",
@@ -185,6 +196,15 @@ export const toolCategories: ToolCategory[] = [
 					"Create customizable QR codes with logo embedding and styling options.",
 				icon: <QrCode className="h-4 w-4" />,
 				priority: 9,
+			},
+			{
+				title: "Unix Timestamp Converter",
+				href: "/unix-timestamp-converter",
+				description:
+					"Convert between Unix timestamps and human-readable dates with timezone support.",
+				icon: <Clock className="h-4 w-4" />,
+				priority: 4,
+				isNew: true,
 			},
 		],
 	},
